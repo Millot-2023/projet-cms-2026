@@ -2,7 +2,7 @@
    MAIN.SCSS - ARCHITECTURE PROJET-CMS-2026
    ========================================================================== */
 
-// 1. CONFIGURATION (L'ordre est vital ici)
+// 1. CONFIGURATION
 @use "variables" as *;
 @use "reset";
 
@@ -15,6 +15,7 @@
 @use "article";
 @use "evolution";
 @use "footer";
+@use "admin";
 
 /* ==========================================================================
    VERROUILLAGE FINAL DU CALAGE
@@ -24,6 +25,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    font-family: $font-main;
 }
 
 #main {
@@ -31,4 +33,14 @@ body {
     width: 100%;
     margin: 0 auto;
     display: block;
+    // Sécurité : on s'assure que le contenu du main respecte le rythme
+    padding-top: $space-between-paragraphs;
+}
+
+hr {
+    border: 0;
+    border-top: 3px solid #e0e0e0;
+    margin: $space-between-paragraphs 0; // Utilisation de ta variable !
+    display: block;
+    width: 100%;
 }

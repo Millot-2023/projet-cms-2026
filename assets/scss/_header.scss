@@ -10,17 +10,23 @@
     background-color: $white;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; // Verrouille le centrage vertical global
     padding: 0 5%;
     z-index: 9999; 
     border-bottom: 1px solid rgba(0,0,0,0.1);
     box-sizing: border-box;
 
-    .logo a {
-        text-decoration: none;
-        color: #000;
-        font-weight: 800;
-        text-transform: uppercase;
+    .logo {
+        display: flex;
+        align-items: center; // Assure que le logo est centré
+        height: 100%;
+        
+        a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
     }
 }
 
@@ -28,17 +34,29 @@
 .nav-container {
     display: flex;
     align-items: center;
+    height: 100%; // Prend toute la hauteur pour centrer les enfants
 
     .nav-links {
         display: flex;
         list-style: none;
-        gap: 30px; // Espace entre les boutons sur Desktop
+        margin: 0; // RESET CRUCIAL
+        padding: 0; // RESET CRUCIAL
+        gap: 30px; 
+        align-items: center; // Aligne les LI horizontalement sur la ligne médiane
 
-        li a {
-            text-decoration: none;
-            color: #444;
-            transition: all 0.3s ease;
-            &:hover { color: $accent; }
+        li {
+            margin: 0; // Supprime les marges parasites qui décalent vers le haut
+            display: flex;
+            align-items: center;
+
+            a {
+                text-decoration: none;
+                color: #444;
+                transition: all 0.3s ease;
+                display: block; // Donne une surface de clic propre
+                line-height: 1; // Neutralise les interlignes qui poussent le texte
+                &:hover { color: $accent; }
+            }
         }
     }
 
@@ -73,6 +91,7 @@
 }
 
 /* RESPONSIVE MOBILE (< 800px) */
+/* (Je ne touche à rien ici, ton code est parfait pour ton usage) */
 @media (max-width: 800px) {
     .nav-container {
         .nav-links { 
@@ -89,14 +108,13 @@
                 background: $white;
                 z-index: 9998;
                 
-                // CRITIQUE : Supprimer le gap et le padding pour coller les boutons
                 gap: 0; 
                 padding: 0; 
                 margin: 0;
 
                 li {
                     width: 100%;
-                    flex: 1; // Division équitable de la hauteur
+                    flex: 1; 
                     display: flex;
                     margin: 0;
                     padding: 0;

@@ -25,6 +25,28 @@ On préférera un bouton robuste en CSS :
 [    Supprimer    ] (avec un padding généreux)
 
 
+
+
+## Surface d'Attaque Minimale
+
+> **Définition :** Concept de sécurité informatique visant à limiter au maximum le nombre de points d'entrée (vecteurs d'attaque) qu'un pirate pourrait exploiter. Plus la surface est petite, plus le système est facile à sécuriser.
+
+### Application au projet
+Dans le cadre de ce développement, la stratégie retenue est l'**Isolation Physique** :
+
+* **Environnement Local :** Contient le moteur dynamique (`PHP`), l'interface de gestion (`Admin`) et les fichiers de configuration. C'est ici que se trouve la "complexité".
+* **Environnement Production (Nuxit) :** Ne contient que les fichiers exportés (`HTML`, `CSS`, `JS` épuré). 
+* **Résultat :** En supprimant tout script exécutable et toute base de données du serveur distant, on réduit la **Surface d'Attaque** à néant. Un fichier HTML mort ne peut pas être "hacké".
+
+
+
+
+
+Local-First Design / a definir  avec google
+
+
+
+
 # Dictionnaire Markdown
 
 # LEXIQUE MARKDOWN - PROJET-CMS-2026

@@ -6,11 +6,23 @@
 $black-sidebar: #1A1A1A;
 $white:         #FFFFFF;
 $gray-light:    #F5F5F5;
-$accent:        #007BFF; // Bleu action (à ajuster selon tes envies)
+$accent:        #007BFF; // Bleu action
 
 // 2. Structure & Layout
 $sidebar-width:  393px; 
 $header-height:  60px;
 
-// 3. Typographie (Exemple de base)
+// 3. Typographie (Fondations)
 $font-main:      'Inter', sans-serif;
+
+// 4. Échelle de Tailles (Pilotage sémantique)
+$font-size-base: 16px;
+$font-size-h1:   2.5rem;   // ~40px
+$font-size-h2:   2rem;     // ~32px
+$font-size-h3:   1.5rem;   // ~24px
+$font-size-p:    1rem;     // 16px
+
+// 5. Rythme Vertical (Adieu les <br>)
+$line-height-base:         1.6;
+$space-between-paragraphs: 1.5rem; 
+$space-between-sections:   4rem;

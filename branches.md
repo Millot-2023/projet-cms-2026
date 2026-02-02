@@ -1,5 +1,5 @@
 # Saved Information (Protocoles de Travail)
-- [2026-01-27] Relecture systématique des balises de repérage (type ``) avant réponse.
+- [2026-01-27] Relecture systématique des balises de repérage avant réponse.
 - [2026-01-27] Commentaires HTML/PHP = Éléments structurels intouchables.
 - [2026-01-21] Nom : Christophe Millot. Pas de fragments, fichiers complets uniquement. 
 - [2026-01-21] Procédure Git push strictement suivie. CSS robuste priorisé sur le SVG.
@@ -7,37 +7,33 @@
 
 ---
 
-# Suivi du Projet : Evolution 2026
+# Suivi du Projet : Evolution (Système Hybride)
 
-## Architecture Fondamentale [2026-02-01]
+## Vision Stratégique [2026-02-02]
+- **Concept :** CMS Dynamique Local -> Export Statique Production (Nuxit).
+- **Surface d'Attaque :** Minimale (zéro PHP/SQL en ligne).
+- **Architecture :** Article > Sections (Grid-block).
 
-### 1. Structure du Header (Fixe)
-- **Fichiers :** `_variables.scss`, `_header.scss`, `header.php`
-- **Logique :** Position `fixed`. Hauteur pilotée par `$header-height`.
+## État des Blocs (Cahier des Charges)
+- **[A] Contenu :** ✅ Validé (CRUD / Médias)
+- **[B] Sécurité :** 🟠 En réflexion (B1, B3, B4)
+- **[C] Interface :** ✅ Validé (Tiroir / Blocs / Persistance)
+- **[E] Export :** ✅ Validé (Statique / Nettoyage / Zip)
 
-### 2. Section Hero (Full-Viewport)
-- **Fichiers :** `_hero.scss`, `includes/hero.php`
-- **Logique :** `height: calc(100vh - $header-height)`. Animation d'entrée par opacité et flou.
+---
 
-### 3. Grille Master et Flux Naturel
-- **Fichiers :** `_grid.scss`, `index.php`
-- **Logique :** - Isolation du Hero hors grille pour le plein écran.
-    - **Zéro Bidouille :** Suppression du `101vh`. Le contenu décide de la hauteur.
-    - **Typo :** Lissage `-webkit-font-smoothing` forcé sur `#main` pour la finesse de la police Inter.
+## Plan de Développement (Branches Git)
+
+### 1. Branche : `feat/core-structure` [EN ATTENTE]
+- **Objectif :** Mise en place de l'arborescence locale et du moteur de base.
+- **Tâche :** Définir le choix final entre JSON ou SQL pour le stockage local.
+
+### 2. Branche : `feat/ui-drawer` [PROCHAINE ÉTAPE]
+- **Objectif :** Création du panneau escamotable (icône engrenage).
+- **Technique :** CSS robuste pour le tiroir, JS minimal pour le Toggle et la persistance.
 
 ---
 
 ## Historique des Décisions IA (Discipline de Code)
-
-### [2026-02-01] - Rappel à l'ordre critique
-> **ALERTE :** L'IA a tendance à dériver vers des initiatives non sollicitées.
-> 1. Interdiction de modifier une valeur non citée par Christophe.
-> 2. Interdiction d'ajouter des structures (ex: .grid-block) non présentes dans le source fourni.
-> 3. L'argument "C'est le contenu qui fait la hauteur" est le seul dogme.
-
----
-
-## État des branches & Git
-* **main** : Synchronisée avec GitHub (Millot-2023/projet-cms-2026).
-* **feat/footer** : Diagnostic noir/blanc activé. Calage sur le flux naturel validé par injection de texte.
+- **[2026-02-02] :** Validation du résumé du projet. L'IA doit se conformer strictement au rôle de guide sans prendre d'initiative sur le design.
 

@@ -1,26 +1,51 @@
-/* STYLE DES COMPOSANTS ÉDITORIAUX */
+/* ==========================================================================
+   _ARTICLE.SCSS - STYLE DES COMPOSANTS ÉDITORIAUX & CARDS
+   ========================================================================== */
+@use "variables" as *;
 
-// Le Bloc Manifeste (Texte)
+// --------------------------------------------------------------------------
+// 1. RYTHME ÉDITORIAL (Ton code actuel préservé)
+// --------------------------------------------------------------------------
+p, ul, ol {
+    margin-bottom: $space-between-paragraphs;
+    line-height: $line-height-base;
+    font-size: $font-size-p;
+    color: #333;
+}
+
+li {
+    margin-bottom: 0.4rem;
+    line-height: $line-height-base;
+    p { margin-bottom: 0; }
+    &:last-child { margin-bottom: 0; }
+}
+
+h1, h2, h3 {
+    margin-top: 1.5rem;
+    margin-bottom: $space-between-paragraphs;
+    line-height: 1.2;
+    color: $black-sidebar;
+}
+
+h1:first-child, h2:first-child, h3:first-child { margin-top: 0; }
+
 .bloc-manifeste {
-    margin-bottom: 2.5rem;
-    
-    p {
-        font-size: 1.15rem;
-        line-height: 1.7;
-        color: #333;
-    }
-
-    &.align-left { text-align: left; }
-    &.align-center { text-align: center; }
-    &.align-right { text-align: right; }
+    margin-bottom: $space-between-paragraphs; 
+    p { font-size: 1.15rem; margin-bottom: $space-between-paragraphs; }
+    &.align-left    { text-align: left; }
+    &.align-center  { text-align: center; }
+    &.align-right   { text-align: right; }
     &.align-justify { text-align: justify; }
 }
 
-// Le Bloc Image
-.bloc-image {
-    margin: 3rem 0;
-    width: 100%;
+.bloc-resume {
+    margin-bottom: $space-between-paragraphs;
+    h3 { margin-top: 1rem; }
+}
 
+.bloc-image {
+    margin-bottom: $space-between-paragraphs;
+    width: 100%;
     figure {
         margin: 0;
         img {
@@ -29,21 +54,161 @@
             border-radius: 2px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-        figcaption {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: #888;
-            font-style: italic;
+    }
+}
+
+hr {
+    margin: $space-between-paragraphs 0;
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+}
+
+// --------------------------------------------------------------------------
+// 2. SYSTÈME DE CARDS (L'Exposition sur l'Index)
+// --------------------------------------------------------------------------
+
+// Conteneur de la grille (justifié à gauche par le flex)
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+// La cellule de base
+.grid-block {
+    flex: 0 0 calc(25% - 1.5rem); // 4 colonnes sur grand écran
+    min-width: 280px;
+    background: #fff;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    }
+
+    // Adaptabilité aux écrans (ton 15 pouces)
+    @media (max-width: 1200px) { flex: 0 0 calc(50% - 1rem); }
+    @media (max-width: 600px)  { flex: 0 0 100%; }
+}
+
+// --- LA CARD FANTÔME (Mode Admin Local) ---
+.card-ghost {
+    border: 2px dashed #bbb;
+    background: transparent;
+    order: -1; // Règle d'or : toujours à gauche
+    justify-content: center;
+    align-items: center;
+    min-height: 350px;
+
+    &:hover {
+        border-color: $black-sidebar;
+        background: #fdfdfd;
+    }
+
+    .ghost-link {
+        text-decoration: none;
+        color: #999;
+        text-align: center;
+        
+        .plus-icon {
+            display: block;
+            font-size: 4rem;
+            font-weight: 200;
+            margin-bottom: 0.5rem;
+        }
+        
+        p {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin: 0;
         }
     }
+}
 
-    &.img-full {
-        grid-column: 1 / -1; // Reste ici car c'est une variante de l'objet image
+// --- CONTENU DE LA CARD RÉELLE ---
+.card-img {
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    background-color: #f7f7f7;
+}
+
+.card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    h3 { 
+        font-size: 1.1rem; 
+        margin: 0 0 0.8rem 0; 
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    &.img-center {
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
+    p { 
+        font-size: 0.85rem; 
+        color: #666; 
+        margin-bottom: 1.5rem;
+        flex-grow: 1; // Pousse le bouton vers le bas
     }
+
+    .read-more {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-decoration: none;
+        color: $black-sidebar;
+        border-bottom: 2px solid $black-sidebar;
+        align-self: flex-start;
+        padding-bottom: 2px;
+        
+        &:hover { opacity: 0.7; }
+    }
+}
+
+// --------------------------------------------------------------------------
+// 3. INTERFACE D'ÉDITION (Ajout pour le CMS)
+// --------------------------------------------------------------------------
+.edit-form {
+    width: 100%;
+    .edit-input-cat {
+        display: block; font-size: 0.8rem; color: $accent; text-transform: uppercase;
+        letter-spacing: 2px; border: none; background: transparent;
+        border-bottom: 1px dashed #ccc; margin-bottom: 1rem;
+        &:focus { outline: none; border-bottom-color: $accent; }
+    }
+    .edit-input-title {
+        display: block; width: 100%; font-size: $font-size-h1; font-weight: 800;
+        border: none; background: transparent; border-left: 5px solid $accent;
+        padding-left: 20px; margin-bottom: 1.5rem; font-family: $font-main;
+        &:focus { outline: none; background-color: rgba(0, 123, 255, 0.03); }
+    }
+    .edit-textarea {
+        width: 100%; min-height: 120px; font-size: $font-size-p; border: 1px solid #eee;
+        padding: 1rem; font-family: $font-main; resize: vertical; background: $gray-light;
+        &:focus { outline: none; background: #fff; border-color: $accent; }
+    }
+}
+
+.admin-controls {
+    display: flex; gap: 1.5rem; align-items: center; padding: 1rem 0;
+    .btn-save {
+        background-color: $black-sidebar; color: $white; border: none;
+        padding: 0.8rem 1.8rem; font-size: 0.75rem; font-weight: 800;
+        cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+        &:hover { background-color: $accent; transform: translateY(-2px); }
+    }
+    .btn-cancel { font-size: 0.75rem; color: #999; text-decoration: none; &:hover { color: #cc0000; } }
+}
+
+.btn-edit-mode {
+    display: inline-block; margin-top: 1rem; font-size: 0.7rem; font-weight: 700;
+    color: #bbb; text-decoration: none; text-transform: uppercase; border: 1px solid #eee;
+    padding: 6px 12px; &:hover { border-color: $accent; color: $accent; }
 }

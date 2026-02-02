@@ -35,7 +35,8 @@ img {
 }
 
 ul, ol {
-  list-style: none;
+  list-style: square;
+  padding-left: 25px;
 }
 
 a {
@@ -125,6 +126,15 @@ body.evolution-open {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
+.main-header .logo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+}
 .main-header .logo a {
   text-decoration: none;
   color: #000;
@@ -140,19 +150,36 @@ body.evolution-open {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  height: 100%;
 }
 .nav-container .nav-links {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   list-style: none;
+  margin: 0;
+  padding: 0;
   gap: 30px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.nav-container .nav-links li {
+  margin: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 .nav-container .nav-links li a {
   text-decoration: none;
   color: #444;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+  display: block;
+  line-height: 1;
 }
 .nav-container .nav-links li a:hover {
   color: #007BFF;
@@ -197,6 +224,7 @@ body.evolution-open {
 }
 
 /* RESPONSIVE MOBILE (< 800px) */
+/* (Je ne touche à rien ici, ton code est parfait pour ton usage) */
 @media (max-width: 800px) {
   .nav-container .nav-links {
     display: none;
@@ -395,14 +423,47 @@ body.evolution-open {
             transform: translateY(-5px);
   }
 }
-/* STYLE DES COMPOSANTS ÉDITORIAUX */
+/* ==========================================================================
+   MAIN.SCSS - ARCHITECTURE PROJET-CMS-2026
+   ========================================================================== */
+/* ==========================================================================
+   _ARTICLE.SCSS - STYLE DES COMPOSANTS ÉDITORIAUX & CARDS
+   ========================================================================== */
+p, ul, ol {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #333;
+}
+
+li {
+  margin-bottom: 0.4rem;
+  line-height: 1.6;
+}
+li p {
+  margin-bottom: 0;
+}
+li:last-child {
+  margin-bottom: 0;
+}
+
+h1, h2, h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  color: #1A1A1A;
+}
+
+h1:first-child, h2:first-child, h3:first-child {
+  margin-top: 0;
+}
+
 .bloc-manifeste {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 .bloc-manifeste p {
   font-size: 1.15rem;
-  line-height: 1.7;
-  color: #333;
+  margin-bottom: 1.5rem;
 }
 .bloc-manifeste.align-left {
   text-align: left;
@@ -417,8 +478,15 @@ body.evolution-open {
   text-align: justify;
 }
 
+.bloc-resume {
+  margin-bottom: 1.5rem;
+}
+.bloc-resume h3 {
+  margin-top: 1rem;
+}
+
 .bloc-image {
-  margin: 3rem 0;
+  margin-bottom: 1.5rem;
   width: 100%;
 }
 .bloc-image figure {
@@ -431,19 +499,248 @@ body.evolution-open {
   -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
-.bloc-image figure figcaption {
-  margin-top: 10px;
+
+hr {
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.grid-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.grid-block {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 calc(25% - 1.5rem);
+          flex: 0 0 calc(25% - 1.5rem);
+  min-width: 280px;
+  background: #fff;
+  border: 1px solid #eee;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-transition: -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+}
+.grid-block:hover {
+  -webkit-transform: translateY(-5px);
+          transform: translateY(-5px);
+  -webkit-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+@media (max-width: 1200px) {
+  .grid-block {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 calc(50% - 1rem);
+            flex: 0 0 calc(50% - 1rem);
+  }
+}
+@media (max-width: 600px) {
+  .grid-block {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+  }
+}
+
+.card-ghost {
+  border: 2px dashed #bbb;
+  background: transparent;
+  -webkit-box-ordinal-group: 0;
+      -ms-flex-order: -1;
+          order: -1;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  min-height: 350px;
+}
+.card-ghost:hover {
+  border-color: #1A1A1A;
+  background: #fdfdfd;
+}
+.card-ghost .ghost-link {
+  text-decoration: none;
+  color: #999;
+  text-align: center;
+}
+.card-ghost .ghost-link .plus-icon {
+  display: block;
+  font-size: 4rem;
+  font-weight: 200;
+  margin-bottom: 0.5rem;
+}
+.card-ghost .ghost-link p {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.card-img {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f7f7f7;
+}
+
+.card-body {
+  padding: 1.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.card-body h3 {
+  font-size: 1.1rem;
+  margin: 0 0 0.8rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.card-body p {
   font-size: 0.85rem;
-  color: #888;
-  font-style: italic;
+  color: #666;
+  margin-bottom: 1.5rem;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
-.bloc-image.img-full {
-  grid-column: 1/-1;
+.card-body .read-more {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-decoration: none;
+  color: #1A1A1A;
+  border-bottom: 2px solid #1A1A1A;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+  padding-bottom: 2px;
 }
-.bloc-image.img-center {
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+.card-body .read-more:hover {
+  opacity: 0.7;
+}
+
+.edit-form {
+  width: 100%;
+}
+.edit-form .edit-input-cat {
+  display: block;
+  font-size: 0.8rem;
+  color: #007BFF;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: none;
+  background: transparent;
+  border-bottom: 1px dashed #ccc;
+  margin-bottom: 1rem;
+}
+.edit-form .edit-input-cat:focus {
+  outline: none;
+  border-bottom-color: #007BFF;
+}
+.edit-form .edit-input-title {
+  display: block;
+  width: 100%;
+  font-size: 2.5rem;
+  font-weight: 800;
+  border: none;
+  background: transparent;
+  border-left: 5px solid #007BFF;
+  padding-left: 20px;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", sans-serif;
+}
+.edit-form .edit-input-title:focus {
+  outline: none;
+  background-color: rgba(0, 123, 255, 0.03);
+}
+.edit-form .edit-textarea {
+  width: 100%;
+  min-height: 120px;
+  font-size: 1rem;
+  border: 1px solid #eee;
+  padding: 1rem;
+  font-family: "Inter", sans-serif;
+  resize: vertical;
+  background: #F5F5F5;
+}
+.edit-form .edit-textarea:focus {
+  outline: none;
+  background: #fff;
+  border-color: #007BFF;
+}
+
+.admin-controls {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 1.5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1rem 0;
+}
+.admin-controls .btn-save {
+  background-color: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+.admin-controls .btn-save:hover {
+  background-color: #007BFF;
+  -webkit-transform: translateY(-2px);
+          transform: translateY(-2px);
+}
+.admin-controls .btn-cancel {
+  font-size: 0.75rem;
+  color: #999;
+  text-decoration: none;
+}
+.admin-controls .btn-cancel:hover {
+  color: #cc0000;
+}
+
+.btn-edit-mode {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #bbb;
+  text-decoration: none;
+  text-transform: uppercase;
+  border: 1px solid #eee;
+  padding: 6px 12px;
+}
+.btn-edit-mode:hover {
+  border-color: #007BFF;
+  color: #007BFF;
 }
 
 /* ==========================================================================
@@ -641,6 +938,126 @@ footer .footer-content p {
 }
 
 /* ==========================================================================
+   MAIN.SCSS - ARCHITECTURE PROJET-CMS-2026
+   ========================================================================== */
+/* ==========================================================================
+   _ADMIN.SCSS - OUTILS D'ÉDITION LOCALE (PROJET-CMS-2026)
+   ========================================================================== */
+.edit-form {
+  width: 100%;
+}
+.edit-form .edit-input-cat {
+  display: block;
+  font-size: 0.8rem;
+  color: #007BFF;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: none;
+  background: transparent;
+  border-bottom: 1px dashed #ccc;
+  margin-bottom: 1rem;
+  width: auto;
+  font-family: "Inter", sans-serif;
+}
+.edit-form .edit-input-cat:focus {
+  outline: none;
+  border-bottom-color: #007BFF;
+}
+.edit-form .edit-input-title {
+  display: block;
+  width: 100%;
+  font-size: 2.5rem;
+  font-weight: 800;
+  border: none;
+  background: transparent;
+  border-left: 5px solid #007BFF;
+  padding-left: 20px;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", sans-serif;
+  color: #1A1A1A;
+}
+.edit-form .edit-input-title:focus {
+  outline: none;
+  background-color: rgba(0, 123, 255, 0.03);
+}
+.edit-form .edit-textarea {
+  width: 100%;
+  min-height: 120px;
+  font-size: 1rem;
+  line-height: 1.6;
+  border: 1px solid #eee;
+  padding: 1rem;
+  font-family: "Inter", sans-serif;
+  resize: vertical;
+  background: #F5F5F5;
+  margin-bottom: 1.5rem;
+}
+.edit-form .edit-textarea:focus {
+  outline: none;
+  background: #fff;
+  border-color: #007BFF;
+}
+
+.admin-controls {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 1.5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1rem 0;
+}
+.admin-controls .btn-save {
+  background-color: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+.admin-controls .btn-save:hover {
+  background-color: #007BFF;
+  -webkit-transform: translateY(-2px);
+          transform: translateY(-2px);
+}
+.admin-controls .btn-cancel {
+  font-size: 0.75rem;
+  color: #999;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.admin-controls .btn-cancel:hover {
+  color: #cc0000;
+}
+
+.btn-edit-mode {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #bbb;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid #eee;
+  padding: 6px 12px;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+.btn-edit-mode:hover {
+  border-color: #007BFF;
+  color: #007BFF;
+  background: #fff;
+}
+
+/* ==========================================================================
    VERROUILLAGE FINAL DU CALAGE
    ========================================================================== */
 body {
@@ -652,6 +1069,7 @@ body {
       -ms-flex-direction: column;
           flex-direction: column;
   min-height: 100vh;
+  font-family: "Inter", sans-serif;
 }
 
 #main {
@@ -661,4 +1079,13 @@ body {
   width: 100%;
   margin: 0 auto;
   display: block;
+  padding-top: 1.5rem;
+}
+
+hr {
+  border: 0;
+  border-top: 3px solid #e0e0e0;
+  margin: 1.5rem 0;
+  display: block;
+  width: 100%;
 }/*# sourceMappingURL=main.css.map */
