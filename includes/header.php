@@ -35,7 +35,8 @@
         <ul class="nav-links">
             <li><a href="<?php echo $base_url; ?>index.php">Accueil</a></li>
             <li><a href="#">Articles</a></li>
-            <li><a href="#">Evolution</a></li>
+            <!--<li><a href="#">Evolution</a></li>-->
+            <li><a href="admin/editor.php">Editeur</a></li>
             
             <?php if ($is_local): ?>
                 <li>
