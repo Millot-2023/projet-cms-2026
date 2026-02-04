@@ -56,6 +56,77 @@ body.evolution-open {
 /* ==========================================================================
    MAIN.SCSS - ARCHITECTURE PROJET-CMS-2026
    ========================================================================== */
+:root {
+  --sidebar-bg: #111;
+  --text-muted: #888;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  background: var(--sidebar-bg);
+  padding: 30px 20px;
+  border-right: 1px solid #333;
+  z-index: 100;
+}
+.sidebar h2 {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 300;
+}
+
+.gauges {
+  display: block !important;
+  background: red !important;
+}
+.gauges .gauge-row {
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  border: 1px solid yellow !important;
+}
+
+.canvas {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  background: #e5e5e5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 60px;
+  margin-left: 320px;
+}
+
+.paper {
+  width: 850px;
+  background: #fff;
+  color: #000;
+  min-height: 1100px;
+  padding: 100px;
+  -webkit-box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+.paper h1 {
+  display: block;
+  visibility: visible;
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 60px;
+  color: #000;
+  font-family: "Inter", sans-serif;
+}
+
+/* ==========================================================================
+   MAIN.SCSS - ARCHITECTURE PROJET-CMS-2026
+   ========================================================================== */
 /* GRILLE MASTER (PROTOCOLE FRACTIONS) */
 .master-grid {
   display: grid;

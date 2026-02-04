@@ -1,203 +1,106 @@
 @use "variables" as *;
 
-// VARIABLES LOCALES (Overridable via :root)
+// 1. LOCAL VARIABLES (SIDEBAR)
 :root {
     --sidebar-bg: #111;
-    --accent: #fff;
-    --text-muted: #666;
-    --red-close: #ff4d4d;
-    --canvas-bg: #e5e5e5;
-    --body-bg: #222;
+    --text-muted: #888;
 }
 
-// MAIN LAYOUT
-body {
-    margin: 0;
-    font-family: $font-main;
-    background: var(--body-bg);
-    color: #fff;
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-    width: 100vw;
-}
-
-// SIDEBAR OVERLAY SYSTEM
+// 2. LAYOUT PRINCIPAL
 .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    top: 0; left: 0; bottom: 0;
     width: 320px;
     background: var(--sidebar-bg);
     padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
     border-right: 1px solid #333;
     z-index: 100;
-    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    transform: translateX(0);
 
     h2 {
         font-size: 14px;
-        letter-spacing: 2px;
         text-transform: uppercase;
-        margin-bottom: 40px;
-        display: flex;
-        align-items: center;
-        color: #ffffff !important; 
-        font-weight: $weight-light;
-    }
-
-    .close-sidebar {
-        color: var(--red-close);
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 18px;
-        margin-right: 15px;
-    }
-
-    .mode-toggle {
-        margin-left: auto;
-        cursor: pointer;
-        font-size: 18px;
-    }
-}
-
-// STATE: SIDEBAR HIDDEN
-body.sidebar-hidden {
-    .sidebar { transform: translateX(-100%); }
-    .settings-trigger { display: flex; }
-}
-
-// UI COMPONENTS
-.section-label {
-    font-size: 10px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    display: block;
-}
-
-.btn-main {
-    width: 100%;
-    background: #fff;
-    color: #000;
-    border: none;
-    padding: 12px;
-    font-weight: $weight-light; 
-    cursor: pointer;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    font-size: 11px;
-}
-
-@use "variables" as *;
-
-.grid-tools {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 30px;
-
-    .tool-btn {
-        background: #222; // On garde un fond sombre cohérent avec ta sidebar
-        border: 1px solid #333;
-        color: #fff;       // Icônes blanches par défaut
-        height: 40px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-
-        svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-            shape-rendering: crispEdges; // Indispensable pour tes lignes de 1px
-        }
-
-        &:hover {
-            background: #fff;
-            color: #000;
-            border-color: #fff;
-        }
-    }
-}
-
-// BOUTONS DE BAS DE PAGE (LOGIQUE FLEX)
-.publish-btn {
-    margin-top: auto; 
-    background: #fff;
-    border: none;
-    color: #000;
-    padding: 15px;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 11px;
-    margin-bottom: 10px; 
-}
-
-.exit-btn {
-    display: block;
-    width: 100%;
-    background: transparent;
-    border: 1px solid #333;
-    color: #888;
-    padding: 12px;
-    cursor: pointer;
-    font-weight: $weight-light; 
-    text-transform: uppercase;
-    font-size: 11px;
-    transition: all 0.3s ease;
-
-    &:hover {
         color: #fff;
-        border-color: #666;
+        font-weight: 300; // Remplacement de $weight-light par 300
     }
 }
 
-// WORKSPACE & PAPER
+// 3. LE PILOTAGE (GRID) - ALIGNEMENT PARFAIT
+/*
+.gauges {
+    padding: 10px 0;
+
+    .gauge-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;      
+        height: 35px;             
+        gap: 15px;                
+
+        .gauge-label {
+            width: 70px;          
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .gauge-control {
+            flex-grow: 1;        
+            display: flex;       
+            align-items: center;
+
+            .gauge-slider {
+                width: 100%;
+                cursor: pointer;
+            }
+        }
+
+        .gauge-data {
+            width: 50px;          
+            text-align: right;
+            font-size: 12px;
+            color: #fff;
+        }
+    }
+}*/
+
+
+// TEST DE SURVIE DES JAUGES
+.gauges {
+    display: block !important;
+    background: red !important; // Si tu vois du rouge, c'est que la classe est reconnue
+    
+    .gauge-row {
+        display: flex !important;
+        border: 1px solid yellow !important;
+    }
+}
+
+
+
+// 4. ZONE DE TRAVAIL (TON HERO EST ICI)
 .canvas {
     flex-grow: 1;
-    width: 100vw;
-    background: var(--canvas-bg);
+    background: #e5e5e5;
     display: flex;
     justify-content: center;
     padding: 60px;
-    overflow-y: auto;
-    transition: padding-left 0.4s;
+    margin-left: 320px; // Évite le chevauchement
 }
-
-body:not(.sidebar-hidden) .canvas { padding-left: 380px; }
 
 .paper {
     width: 850px;
     background: #fff;
-    color: #000;
+    color: #000; // FORCE LE NOIR POUR LE HERO
     min-height: 1100px;
     padding: 100px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-    transition: background 0.4s, color 0.4s;
-
-    &.dark-mode {
-        background: #000 !important;
-        color: #fff !important;
-    }
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
 
     h1 {
+        display: block;
+        visibility: visible;
         font-size: 48px;
         text-align: center;
         margin-bottom: 60px;
-        outline: none;
+        color: #000; // TON HERO DOIT ÊTRE NOIR
+        font-family: $font-main;
     }
-}
-
-.content-area {
-    font-size: 20px;
-    line-height: 1.6;
-    outline: none;
-    min-height: 600px;
 }

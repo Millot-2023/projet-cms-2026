@@ -5,17 +5,26 @@
 // 1. CONFIGURATION
 @use "variables" as *;
 @use "reset";
-
+@use "editor";
 // 2. STRUCTURE GLOBALE
 @use "grid";
 
 // 3. COMPOSANTS
 @use "header";
+
+
+
 @use "hero";
+
 @use "article";
+
 @use "evolution";
+
 @use "footer";
+
 @use "admin";
+
+
 
 /* ==========================================================================
    VERROUILLAGE FINAL DU CALAGE

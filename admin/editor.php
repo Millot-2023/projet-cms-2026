@@ -59,36 +59,66 @@ if ($slug && file_exists($content_dir . $slug . '/data.php')) {
         .close-sidebar { color: var(--red-close); cursor: pointer; font-weight: bold; font-size: 18px; margin-right: 15px; }
         .mode-toggle { margin-left: auto; cursor: pointer; font-size: 18px; }
 
-        .section-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; display: block; }
+        .section-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-top: 20px; margin-bottom: 15px; display: block; }
         
         .btn-main { 
             width: 100%; background: #fff; color: #000; border: none; padding: 12px; 
             font-weight: bold; cursor: pointer; margin-bottom: 10px; text-transform: uppercase; font-size: 11px; 
         }
 
-        .grid-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 30px; }
+        .grid-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
         .tool-btn { 
             background: #222; border: 1px solid #333; color: #fff; height: 40px; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
         }
         .tool-btn:hover { background: #fff; color: #000; }
 
-        /* BOUTONS DE BAS DE PAGE */
+        /* --- LE BLOC DES JAUGES EN FLEX --- */
+        .gauge-row {
+            display: flex;
+            align-items: center;
+            height: 35px;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .gauge-label {
+            width: 70px;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .gauge-control {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        .gauge-slider {
+            width: 100%;
+            cursor: pointer;
+        }
+        .gauge-data {
+            width: 50px;
+            text-align: right;
+            font-family: monospace;
+            font-size: 11px;
+            color: #fff;
+        }
+        /* ---------------------------------- */
+
         .publish-btn { 
-            margin-top: auto; /* Pousse vers le bas */
+            margin-top: auto; 
             background: #fff; color: #000; border: none; padding: 15px; 
             cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px;
         }
 
         .exit-btn { 
-            margin-top: 20px; /* Voilà tes 20px d'écart */
+            margin-top: 20px; 
             background: transparent; border: 1px solid #333; color: #888; padding: 12px; 
             cursor: pointer; font-weight: 300; text-transform: uppercase; font-size: 11px;
             transition: all 0.3s;
         }
         .exit-btn:hover { color: #fff; border-color: #666; }
 
-        /* ZONE DE TRAVAIL */
         .canvas { 
             flex-grow: 1; width: 100vw; background: var(--canvas-bg); 
             display: flex; justify-content: center; padding: 60px; 
@@ -129,45 +159,12 @@ if ($slug && file_exists($content_dir . $slug . '/data.php')) {
         <span class="section-label">TYPOGRAPHIE</span>
         <button class="btn-main" onclick="addManifeste()">AJOUTER MANIFESTE</button>
         
-
-<div class="grid-tools">
-    <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyLeft');">
-        <svg viewBox="0 0 24 24" width="20" height="20">
-            <rect x="3" y="5" width="18" height="2" fill="currentColor"/>
-            <rect x="3" y="10" width="11" height="2" fill="currentColor"/>
-            <rect x="3" y="15" width="18" height="2" fill="currentColor"/>
-            <rect x="3" y="20" width="11" height="2" fill="currentColor"/>
-        </svg>
-    </button>
-    
-    <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyCenter');">
-        <svg viewBox="0 0 24 24" width="20" height="20">
-            <rect x="3" y="5" width="18" height="2" fill="currentColor"/>
-            <rect x="7" y="10" width="10" height="2" fill="currentColor"/>
-            <rect x="3" y="15" width="18" height="2" fill="currentColor"/>
-            <rect x="7" y="20" width="10" height="2" fill="currentColor"/>
-        </svg>
-    </button>
-    
-    <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyRight');">
-        <svg viewBox="0 0 24 24" width="20" height="20">
-            <rect x="3" y="5" width="18" height="2" fill="currentColor"/>
-            <rect x="10" y="10" width="11" height="2" fill="currentColor"/>
-            <rect x="3" y="15" width="18" height="2" fill="currentColor"/>
-            <rect x="10" y="20" width="11" height="2" fill="currentColor"/>
-        </svg>
-    </button>
-    
-    <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyFull');">
-        <svg viewBox="0 0 24 24" width="20" height="20">
-            <rect x="3" y="5" width="18" height="2" fill="currentColor"/>
-            <rect x="3" y="10" width="18" height="2" fill="currentColor"/>
-            <rect x="3" y="15" width="18" height="2" fill="currentColor"/>
-            <rect x="3" y="20" width="18" height="2" fill="currentColor"/>
-        </svg>
-    </button>
-</div>
-
+        <div class="grid-tools">
+            <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyLeft');">L</button>
+            <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyCenter');">C</button>
+            <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyRight');">R</button>
+            <button class="tool-btn" onmousedown="event.preventDefault(); document.execCommand('justifyFull');">F</button>
+        </div>
 
         <span class="section-label">ARCHITECTURE</span>
         <div class="grid-tools">
@@ -175,6 +172,32 @@ if ($slug && file_exists($content_dir . $slug . '/data.php')) {
             <button class="tool-btn" onclick="grid(2)">H2</button>
             <button class="tool-btn" onclick="grid(3)">H3</button>
             <button class="tool-btn" onclick="grid(4)">H4</button>
+        </div>
+
+        <span class="section-label">PILOTAGE TYPO</span>
+
+        <div class="gauge-row">
+            <div class="gauge-label">Taille</div>
+            <div class="gauge-control">
+                <input type="range" class="gauge-slider" min="12" max="100" value="48" oninput="document.getElementById('editable-title').style.fontSize = this.value + 'px'; document.getElementById('val-size').innerText = this.value;">
+            </div>
+            <div class="gauge-data"><span id="val-size">48</span>px</div>
+        </div>
+
+        <div class="gauge-row">
+            <div class="gauge-label">Graisse</div>
+            <div class="gauge-control">
+                <input type="range" class="gauge-slider" min="100" max="900" step="100" value="700" oninput="document.getElementById('editable-title').style.fontWeight = this.value; document.getElementById('val-weight').innerText = this.value;">
+            </div>
+            <div class="gauge-data"><span id="val-weight">700</span></div>
+        </div>
+
+        <div class="gauge-row">
+            <div class="gauge-label">Hauteur</div>
+            <div class="gauge-control">
+                <input type="range" class="gauge-slider" min="0.8" max="2.5" step="0.1" value="1.2" oninput="document.getElementById('editable-title').style.lineHeight = this.value; document.getElementById('val-height').innerText = this.value;">
+            </div>
+            <div class="gauge-data"><span id="val-height">1.2</span></div>
         </div>
 
         <button class="publish-btn" onclick="saveData()">PUBLIER</button>
@@ -209,7 +232,6 @@ if ($slug && file_exists($content_dir . $slug . '/data.php')) {
     }
 
     function grid(cols) { document.getElementById('editor-core').style.columnCount = cols; }
-    
     function saveData() { alert('Données sauvegardées (simulation)'); }
     </script>
 </body>
