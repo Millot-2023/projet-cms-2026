@@ -3,7 +3,7 @@
  * DONNÉES GÉNÉRÉES PAR L'ÉDITEUR
  */
 
-$title = 'Titre du Projet';
+$title = 'Test gemini is tired !';
 $designSystem = array (
   'h1' => 
   array (
@@ -49,5 +49,6 @@ $designSystem = array (
   ),
 );
 $htmlContent = '
-                            <div class="block-container"><p contenteditable="true">ghjghjhjgSaisissez votre manifeste...</p><div class="delete-btn">✕</div></div>';
+                
+                            <div class="block-container"><p>Je n\'en peux plus... Gemini ne m\'écoute pas et fais ce qu\'iol veut !...</p></div>            ';
 ?>

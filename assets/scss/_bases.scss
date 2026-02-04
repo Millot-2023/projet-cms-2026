@@ -1,0 +1,35 @@
+/* ==========================================================================
+   _BASE.SCSS - LE PONT ENTRE VARIABLES ET HTML
+   ========================================================================== */
+
+body {
+    font-family: $font-main;
+    font-size: $font-size-base;    // On active tes 16px
+    line-height: $line-height-base; // On active tes 1.6
+    color: $black-sidebar;
+    background-color: $gray-light;
+}
+
+// ICI : On force enfin l'application de tes variables de titres
+h1, .paper h1 {
+    font-size: $font-size-h1;      // On appelle tes 2.5rem (~40px)
+    font-weight: $weight-bold;
+    line-height: 1.2;
+    margin-bottom: $space-between-paragraphs;
+}
+
+h2 {
+    font-size: $font-size-h2;      // On appelle tes 2rem
+    font-weight: $weight-bold;
+    margin-top: $space-between-sections / 2;
+    margin-bottom: $space-between-paragraphs;
+}
+
+h3 {
+    font-size: $font-size-h3;
+    font-weight: $weight-bold;
+}
+
+p {
+    margin-bottom: $space-between-paragraphs;
+}
