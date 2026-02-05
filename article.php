@@ -1,6 +1,7 @@
 <?php
 /**
  * PROJET-CMS-2026 - VUE ARTICLE
+ * @author: Christophe Millot
  */
 require_once 'core/config.php';
 
@@ -16,42 +17,70 @@ if ($slug && file_exists($data_file)) {
 
 require_once 'includes/header.php'; 
 require_once 'includes/hero.php'; 
+
+// Sécurité : On s'assure que le contenu ne contient aucune balise 'contenteditable' résiduelle
+$finalHtml = str_replace('contenteditable="true"', 'contenteditable="false"', $htmlContent);
 ?>
 
 <style>
+/* 1. RAIL STANDARD 1200PX */
+#main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* 2. VERROUILLAGE LECTEUR (CSS) */
+/* On empêche toute interaction de type "input" ou "édition" */
+.article-reader-mode {
+    user-select: text; /* Permet de copier le texte, mais c'est tout */
+    cursor: default;
+}
+
+.article-reader-mode * {
+    outline: none !important;
+    border: none !important; /* Supprime les pointillés de l'éditeur */
+}
+
+/* 3. DESIGN SYSTEM (FONTS) */
 <?php 
 if (isset($designSystem)) {
     foreach ($designSystem as $tag => $props) {
-        echo ".article-render $tag { 
-            font-size: {$props['fontSize']}; 
-            line-height: {$props['lineHeight']}; 
-            text-align: {$props['textAlign']}; 
-            font-weight: {$props['fontWeight']}; 
+        echo ".article-reader-mode $tag { 
+            font-size: " . ($props['fontSize'] ?? 'inherit') . "; 
+            line-height: " . ($props['lineHeight'] ?? '1.6') . "; 
+            text-align: " . ($props['textAlign'] ?? 'left') . "; 
+            font-weight: " . ($props['fontWeight'] ?? '400') . "; 
+            margin-bottom: 1.5rem;
         }\n";
     }
 }
 ?>
+
+/* 4. DISCRETION ET ITALIQUE */
+.meta-discrete {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #888;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+/* SUPPRESSION DES ELEMENTS ADMIN */
+.article-header, .delete-block, .btn-edit-mode, .admin-only {
+    display: none !important;
+}
 </style>
 
-<div class="master-grid">
-    <main id="main">
-        <article class="grid-block">
-            <header class="article-header">
-                <span class="category"><?php echo $category; ?></span>
-                <h1><?php echo $title; ?></h1>
-                <p class="date">Publié le <?php echo $date; ?></p>
-                <a href="admin/editor.php?slug=<?php echo $slug; ?>" class="btn-edit-mode">Modifier via l'éditeur</a>
-            </header>
+<main id="main">
+    <div class="meta-discrete">
+        <?php echo $category; ?> — Publié le <?php echo $date; ?>
+    </div>
 
-            <div class="article-content">
-                <p class="summary"><em><?php echo $summary; ?></em></p>
-                <hr>
-                <div class="article-render">
-                    <?php echo $htmlContent ?? 'Aucun contenu.'; ?>
-                </div>
-            </div>
-        </article>
-    </main>
-</div>
+    <div class="article-reader-mode">
+        <?php echo $finalHtml; ?>
+    </div>
+</main>
 
 <?php require_once 'includes/footer.php'; ?>

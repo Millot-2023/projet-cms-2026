@@ -136,8 +136,8 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
 
         <div class="sidebar-scroll">
             <span class="section-label">MÉTADONNÉES</span>
-            <input type="text" class="admin-input" placeholder="Slug" value="<?php echo $slug; ?>">
-            <textarea class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo $summary; ?></textarea>
+            <input type="text" id="inp-slug" class="admin-input" placeholder="Slug" value="<?php echo $slug; ?>">
+            <textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo $summary; ?></textarea>
 
             <span class="section-label">TYPOGRAPHIE</span>
             <div class="grid-structure">
@@ -203,7 +203,7 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
         </div>
 
         <div class="sidebar-footer">
-            <button style="background:#fff; color:#000; border:none; padding:15px; font-weight:900; cursor:pointer; text-transform:uppercase;">PUBLIER</button>
+            <button onclick="publishProject()" style="background:#fff; color:#000; border:none; padding:15px; font-weight:900; cursor:pointer; text-transform:uppercase;">PUBLIER</button>
             <a href="../index.php" style="color:var(--sidebar-muted); text-align:center; font-size:10px; text-decoration:none; border:1px solid var(--sidebar-border); padding:10px; border-radius:4px;">RETOUR</a>
         </div>
     </aside>
@@ -212,9 +212,9 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
         <article class="paper" id="paper">
             <div class="block-container">
                 <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
-                <h1 contenteditable="true" onfocus="setTarget('h1')"><?php echo htmlspecialchars($title); ?></h1>
+                <h1 id="editable-main-title" contenteditable="true" onfocus="setTarget('h1')"><?php echo htmlspecialchars($title); ?></h1>
             </div>
-            <div id="editor-core"></div>
+            <div id="editor-core"><?php echo $htmlContent; ?></div>
         </article>
     </main>
 
@@ -233,6 +233,35 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
         }
         css += `.grid-block { gap: ${currentGutter}; }`;
         document.getElementById('dynamic-styles').innerHTML = css;
+    }
+
+    // --- LOGIQUE DE PUBLICATION ---
+    function publishProject() {
+        const payload = {
+            slug: document.getElementById('inp-slug').value,
+            title: document.getElementById('editable-main-title').innerText,
+            summary: document.getElementById('inp-summary').value,
+            category: "Design",
+            designSystem: designSystem,
+            htmlContent: document.getElementById('editor-core').innerHTML
+        };
+
+        fetch('save.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(res => {
+            alert(res.message);
+            if(res.status === 'success') {
+                window.location.href = '../index.php';
+            }
+        })
+        .catch(err => {
+            console.error("Erreur de publication:", err);
+            alert("Erreur technique lors de la publication.");
+        });
     }
 
     function updateStyle(prop, val, displayId) {
