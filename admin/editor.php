@@ -6,8 +6,21 @@
 $is_local = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['SERVER_NAME'] === 'localhost');
 if (!$is_local) { die("Acces reserve."); exit; }
 
+
+
+
 $content_dir = "../content/";
-$slug = isset($_GET['slug']) ? $_GET['slug'] : 'nouveau-projet';
+// On écoute 'project' et on ne met AUCUNE valeur par défaut pour éviter les dossiers fantômes
+$slug = isset($_GET['project']) ? $_GET['project'] : '';
+
+if (empty($slug)) {
+    header('Location: ../index.php');
+    exit;
+}
+
+
+
+
 
 // Valeurs par défaut
 $title = "Titre du Projet";
