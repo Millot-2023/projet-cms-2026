@@ -136,7 +136,7 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
 
         <div class="sidebar-scroll">
             <span class="section-label">MÉTADONNÉES</span>
-            <input type="text" id="inp-slug" class="admin-input" placeholder="Slug" value="<?php echo $slug; ?>">
+            <input type="text" id="inp-slug" class="admin-input" placeholder="Slug" value="<?php echo $slug; ?>" readonly>
             <textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo $summary; ?></textarea>
 
             <span class="section-label">TYPOGRAPHIE</span>
@@ -212,7 +212,7 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
         <article class="paper" id="paper">
             <div class="block-container">
                 <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
-                <h1 id="editable-main-title" contenteditable="true" onfocus="setTarget('h1')"><?php echo htmlspecialchars($title); ?></h1>
+                <h1 id="main-title" contenteditable="true" onfocus="setTarget('h1')"><?php echo htmlspecialchars($title); ?></h1>
             </div>
             <div id="editor-core"><?php echo $htmlContent; ?></div>
         </article>
@@ -330,7 +330,10 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
         container.innerHTML = `
             <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
             <div class="float-block">
-                <div class="img-placeholder" onclick="setTarget('img', this)" style="${style} background:#f0f0f0; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; color:#999; font-size:10px; cursor:pointer;">IMAGE</div>
+                <div class="img-placeholder" onclick="triggerUpload(this)" style="${style} background:#f0f0f0; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; color:#999; font-size:10px; cursor:pointer; overflow:hidden; position:relative;">
+                    Cliquer pour télécharger une image
+                    <input type="file" class="hidden-file-input" style="display:none;" accept="image/*" onchange="handleImageSelect(this)">
+                </div> 
                 <p contenteditable="true" onfocus="setTarget('p')">${LOREM}</p>
             </div>`;
         document.getElementById('editor-core').appendChild(container);
@@ -351,7 +354,179 @@ $safeHtml = str_replace(["\r", "\n"], '', addslashes($htmlContent));
         document.getElementById('editor-core').appendChild(container);
     }
 
+    function stringToSlug(str) {
+        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+    }
+
+
+
+
+
+
+
+
+
+
+function publishProject() {
+        const titleH1 = document.getElementById('main-title').innerText;
+        const slug = stringToSlug(titleH1);
+        const summary = document.getElementById('inp-summary').value;
+
+        // --- LE PONT : RÉCUPÉRATION DE LA PREMIÈRE IMAGE POUR LA CARTE ---
+        const firstImg = document.querySelector('#editor-core img');
+        const coverImage = firstImg ? firstImg.src : ""; 
+
+        // Nettoyage pour le rendu final
+        const coreClone = document.getElementById('editor-core').cloneNode(true);
+        coreClone.querySelectorAll('.delete-block').forEach(el => el.remove());
+        coreClone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+        const cleanHtml = coreClone.innerHTML;
+
+        const formData = new FormData();
+        formData.append('slug', slug);
+        formData.append('title', titleH1);
+        formData.append('summary', summary);
+        formData.append('designSystem', JSON.stringify(designSystem));
+        formData.append('htmlContent', cleanHtml);
+        formData.append('cover', coverImage); // Ajout de la couverture pour l'index
+        formData.append('category', 'Design');
+
+        fetch('save.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(res => {
+            alert(res.message);
+            if(res.status === 'success') window.location.href = '../index.php';
+        })
+        .catch(err => alert("Erreur de sauvegarde"));
+    }
+
     window.onload = () => { renderStyles(); setTarget('h1'); };
+
+    /* --- NOUVELLES FONCTIONS GESTION IMAGE --- */
+    function triggerUpload(el) {
+        el.querySelector('.hidden-file-input').click();
+    }
+
+
+
+
+
+
+
+
+
+// traitement des images de blocs-images
+
+/* --- FONCTION CORRIGÉE --- */
+function handleImageSelect(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const placeholder = input.parentElement;
+            
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            
+            // 1. SIMPLE CLIC : Active la réglette
+            img.onclick = function(event) {
+                event.stopPropagation();
+                setTarget('img', placeholder);
+            };
+
+            // 2. DOUBLE CLIC : Relance l'explorateur (LA CORRECTION EST ICI)
+            img.ondblclick = function(event) {
+                event.stopPropagation();
+                triggerUpload(placeholder);
+            };
+
+            placeholder.innerHTML = ''; 
+            placeholder.appendChild(img);
+            
+            const newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.className = 'hidden-file-input';
+            newInput.style.display = 'none';
+            newInput.accept = 'image/*';
+            newInput.onchange = function() { handleImageSelect(this); };
+            placeholder.appendChild(newInput);
+            
+            setTarget('img', placeholder);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+   
+
+
+
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+        const core = document.getElementById('editor-core');
+        if (!core) return;
+
+        // 1. On rend les textes éditables
+        core.querySelectorAll('p, h2, h3, h4, h5').forEach(el => {
+            el.setAttribute('contenteditable', 'true');
+            const tag = el.tagName.toLowerCase();
+            el.onfocus = () => setTarget(tag);
+        });
+
+        // 2. On réanime les images et leurs pouvoirs
+        core.querySelectorAll('.img-placeholder').forEach(div => {
+            div.onclick = function() { setTarget('img', this); };
+            div.ondblclick = function(e) { 
+                e.stopPropagation();
+                triggerUpload(this); 
+            };
+
+            // On récupère l'input existant ou on le crée
+            let fileInput = div.querySelector('input[type="file"]');
+            
+            if (!fileInput) {
+                fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.className = 'hidden-file-input';
+                fileInput.style.display = 'none';
+                fileInput.accept = 'image/*';
+                div.appendChild(fileInput);
+            }
+
+            // INDISPENSABLE : On ré-attache la fonction de traitement
+            fileInput.onchange = function() { handleImageSelect(this); };
+
+            const img = div.querySelector('img');
+            if (img) {
+                img.onclick = (e) => { e.stopPropagation(); setTarget('img', div); };
+                img.ondblclick = (e) => { e.stopPropagation(); triggerUpload(div); };
+            }
+        });
+
+        // 3. On réinjecte les croix rouges de suppression (Version Robuste)
+        core.querySelectorAll('.block-container').forEach(container => {
+            if (!container.querySelector('.delete-block')) {
+                const del = document.createElement('div');
+                del.className = 'delete-block';
+                del.innerHTML = '✕';
+                del.onclick = function(e) {
+                    e.stopPropagation();
+                    container.remove();
+                };
+                container.prepend(del);
+            }
+        });
+        
+        renderStyles();
+    });
+
+
+
+
     </script>
 </body>
 </html>

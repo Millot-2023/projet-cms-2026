@@ -1,60 +1,50 @@
 <?php
 /**
  * PROJET-CMS-2026 - ARCHITECTURE NETTOYÉE
- * Index principal : Affichage restreint à la création
+ * Focus : Alignement Catégorie/Date et uniformité visuelle
  * @author: Christophe Millot
  */
 require_once 'core/config.php';
-
-// Affichage des erreurs pour le développement
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 require_once 'includes/header.php'; 
 require_once 'includes/hero.php'; 
 ?>
 
 <div class="master-grid">
-
     <main id="main">
-        
         <h1 class="section-title">Gestion des Projets</h1>
 
         <div class="grid-container">
-
-            <?php 
-            // 1. DÉTECTION LOCALE : UNIQUE CARTE AUTORISÉE
-            $is_local = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['SERVER_NAME'] === 'localhost');
-            if ($is_local): 
-            ?>
-                <article class="grid-block card-ghost">
-                    <div class="card-image">
-                        <img src="assets/img/template-ghost.jpg" alt="Nouveau Projet">
-                    </div>
-                    <div class="card-content">
-                        <div class="card-meta">
-                            <span class="category">ADMIN</span>
-                            <span class="date"><?php echo date('d.m.Y'); ?></span>
+            
+            <div class="grid-block">
+                <div class="card-image">
+                    <img src="assets/img/image-template.png" alt="Modèle de projet">
+                </div>
+                
+                <div class="card-content">
+                    <header class="article-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <span class="category" style="font-weight: bold; color: #666;">Catégorie</span>
+                            <p class="date" style="margin: 0; color: #999;">00 Janvier 2026</p>
                         </div>
-                        <h3>NOUVEAU PROJET</h3>
-                        <p class="summary">Prêt à documenter une nouvelle création ? Cliquez pour générer le dossier.</p>
-                        <div class="card-action">
-                            <a href="admin/editor.php?action=new" class="btn-open">CRÉER</a>
-                        </div>
+                        <h1 class="main-article-title" style="margin-top: 0.5rem;">Titre du Projet</h1>
+                    </header>
+                    
+                    <p>Créer un article...</p>
+                    
+                    <div class="card-footer" style="margin-top: auto; padding-top: 1rem;">
+                        <a href="admin/editor.php" class="btn-create" style="display: block; text-align: center; background: #000; color: #fff; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                            CRÉER
+                        </a>
                     </div>
-                </article>
-            <?php endif; ?>
+                </div>
+            </div>
 
             <?php
-            // 2. BOUCLE DYNAMIQUE : VIDE PAR DÉFAUT
-            // Le code reste présent pour accueillir tes futurs projets, 
-            // mais il ne lira RIEN qui commence par un underscore.
             $content_path = 'content/';
             if (is_dir($content_path)) {
                 $folders = array_diff(scandir($content_path), array('..', '.', '_trash'));
                 
                 foreach ($folders as $folder) {
-                    // FILTRE ABSOLU : On ignore systématiquement le témoin (_article-demo)
                     if (strpos($folder, '_') === 0) continue;
 
                     $project_dir = $content_path . $folder;
@@ -64,10 +54,29 @@ require_once 'includes/hero.php';
                         include $data_file; 
                         ?>
                         <article class="grid-block">
+                            <div class="card-image">
+                                <?php if(!empty($cover)): ?>
+                                    <img src="<?php echo $cover; ?>" alt="<?php echo $title; ?>">
+                                <?php else: ?>
+                                    <img src="assets/img/image-template.png" alt="Pas d'image">
+                                <?php endif; ?>
+                            </div>
+                            
                             <div class="card-content">
-                                <h3><?php echo $title; ?></h3>
-                                <div class="card-action">
-                                    <a href="article.php?slug=<?php echo $folder; ?>" class="btn-open">Lire</a>
+                                <header class="article-header">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        <span class="category" style="font-weight: bold; color: #666;"><?php echo $category; ?></span>
+                                        <p class="date" style="margin: 0; color: #999;"><?php echo $date; ?></p>
+                                    </div>
+                                    <h1 class="main-article-title" style="margin-top: 0.5rem;"><?php echo $title; ?></h1>
+                                </header>
+                                
+                                <p><?php echo substr(strip_tags($summary), 0, 100) . '...'; ?></p>
+                                
+                                <div class="card-footer" style="margin-top: auto; padding-top: 1rem;">
+                                    <a href="article.php?slug=<?php echo $folder; ?>" class="btn-open" style="display: block; text-align: center; border: 2px solid #000; color: #000; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                                        LIRE L'ARTICLE
+                                    </a>
                                 </div>
                             </div>
                         </article>
@@ -76,9 +85,8 @@ require_once 'includes/hero.php';
                 }
             }
             ?>
-        </div> 
-    </main>
 
+        </div> </main>
 </div>
 
 <?php require_once 'includes/footer.php'; ?>

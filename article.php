@@ -23,27 +23,7 @@ $finalHtml = str_replace('contenteditable="true"', 'contenteditable="false"', $h
 ?>
 
 <style>
-/* 1. RAIL STANDARD 1200PX */
-#main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
-/* 2. VERROUILLAGE LECTEUR (CSS) */
-/* On empêche toute interaction de type "input" ou "édition" */
-.article-reader-mode {
-    user-select: text; /* Permet de copier le texte, mais c'est tout */
-    cursor: default;
-}
-
-.article-reader-mode * {
-    outline: none !important;
-    border: none !important; /* Supprime les pointillés de l'éditeur */
-}
-
-/* 3. DESIGN SYSTEM (FONTS) */
+/* 1. SEUL LE DYNAMIQUE RESTE ICI */
 <?php 
 if (isset($designSystem)) {
     foreach ($designSystem as $tag => $props) {
@@ -73,14 +53,33 @@ if (isset($designSystem)) {
 }
 </style>
 
-<main id="main">
-    <div class="meta-discrete">
-        <?php echo $category; ?> — Publié le <?php echo $date; ?>
-    </div>
+<div class="master-grid">
+    <main id="main">
+        <article class="single-article">
+            
+            <?php if (!empty($image)): ?>
+                <div class="project-main-image">
+                    <img src="<?php echo $image; ?>" alt="<?php echo $title; ?>">
+                </div>
+            <?php endif; ?>
 
-    <div class="article-reader-mode">
-        <?php echo $finalHtml; ?>
-    </div>
-</main>
+            <header class="article-header">
+                <span class="category"><?php echo $category; ?></span>
+                <h1 class="main-article-title"><?php echo $title; ?></h1>
+                <p class="date">Publié le <?php echo $date; ?></p>
+                <a href="admin/editor.php?slug=<?php echo $slug; ?>" class="btn-edit-mode">Modifier via l'éditeur</a>
+            </header>
+
+            <div class="article-content">
+                <p class="summary"><em><?php echo $summary; ?></em></p>
+                <hr>
+                
+                <div class="article-render">
+                    <?php echo $htmlContent ?? 'Aucun contenu.'; ?>
+                </div>
+            </div>
+        </article>
+    </main>
+</div>
 
 <?php require_once 'includes/footer.php'; ?>
