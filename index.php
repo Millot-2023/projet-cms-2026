@@ -31,11 +31,11 @@ require_once 'includes/hero.php';
                     
                     <p>Créer un article...</p>
                     
-                    <div class="card-footer" style="margin-top: auto; padding-top: 1rem;">
-                        <a href="admin/editor.php" class="btn-create" style="display: block; text-align: center; background: #000; color: #fff; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                            CRÉER
-                        </a>
-                    </div>
+<div class="card-footer" style="margin-top: auto; padding-top: 1rem;">
+    <a href="admin/create_project.php" class="btn-create" style="display: block; text-align: center; background: #000; color: #fff; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: bold;">
+        CRÉER
+    </a>
+</div>
                 </div>
             </div>
 
