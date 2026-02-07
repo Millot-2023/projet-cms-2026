@@ -1,6 +1,6 @@
 <?php
 /**
- * PROJET-CMS-2026 - VUE ARTICLE
+ * PROJET-CMS-2026 - VUE ARTICLE (VERSION CORRIGÉE COLONNES)
  * @author: Christophe Millot
  */
 require_once 'core/config.php';
@@ -56,6 +56,29 @@ if (isset($designSystem) && is_array($designSystem)) {
     max-width: 100%;
     height: auto;
     display: block;
+}
+
+/* --- FIX COLONNES ÉDITEUR --- */
+.editor-grid { 
+    display: flex !important; 
+    flex-direction: row !important; 
+    flex-wrap: wrap !important; 
+    gap: 20px !important; 
+    width: 100% !important;
+    margin: 2rem 0 !important;
+}
+
+.editor-grid > div { 
+    flex: 1 !important; 
+    min-width: 250px !important; 
+}
+
+/* --- COMPATIBILITÉ ANCIENS BLOCS --- */
+.grid-block:not(.article-header-view) {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important;
 }
 
 /* CLEARFIX POUR LES FLOATS DANS LE RENDU */

@@ -620,7 +620,7 @@ body.no-anim .hero-section h1 {
   font-size: 4rem !important;
   font-weight: 900;
   margin: 0.5rem 0;
-  color: #1A1A1A;
+  color: #000000;
 }
 
 .article-render .block-container {
@@ -635,10 +635,10 @@ body.no-anim .hero-section h1 {
 #evolution-sidebar {
   position: fixed;
   top: 0;
-  left: -393px;
-  width: 393px;
+  left: -340px;
+  width: 340px;
   height: 100vh;
-  background-color: #1A1A1A;
+  background-color: #000000;
   color: #FFFFFF;
   z-index: 2000;
   -webkit-transition: -webkit-transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -649,8 +649,8 @@ body.no-anim .hero-section h1 {
           box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
 }
 #evolution-sidebar.is-open {
-  -webkit-transform: translateX(393px);
-          transform: translateX(393px);
+  -webkit-transform: translateX(340px);
+          transform: translateX(340px);
 }
 #evolution-sidebar .sidebar-inner {
   display: -webkit-box;
@@ -764,7 +764,7 @@ body.no-anim .hero-section h1 {
 
 .btn-publish {
   background: #FFFFFF;
-  color: #1A1A1A;
+  color: #000000;
   margin-top: auto;
 }
 
@@ -774,7 +774,7 @@ body.no-anim .hero-section h1 {
   left: 30px;
   width: 55px;
   height: 55px;
-  background: #1A1A1A;
+  background: #000000;
   border: 1px solid #333;
   border-radius: 50%;
   display: -webkit-box;
@@ -859,7 +859,7 @@ footer .footer-content p {
   padding-left: 20px;
   margin-bottom: 1.5rem;
   font-family: "Inter", sans-serif;
-  color: #1A1A1A;
+  color: #000000;
 }
 .edit-form .edit-input-title:focus {
   outline: none;
@@ -894,7 +894,7 @@ footer .footer-content p {
   padding: 1rem 0;
 }
 .admin-controls .btn-save {
-  background-color: #1A1A1A;
+  background-color: #000000;
   color: #FFFFFF;
   border: none;
   padding: 0.8rem 1.8rem;

@@ -13,16 +13,14 @@ if (!$is_local) { die("Acces reserve."); exit; }
 $content_dir = "../content/";
 $trash_dir   = "../content/_trash/";
 
-// --- LOGIQUE DE GESTION DE LA CORBEILLE (AJOUTÉE POUR STABILITÉ) ---
+// --- LOGIQUE DE GESTION DE LA CORBEILLE ---
 if (isset($_GET['action']) && isset($_GET['slug'])) {
     $action = $_GET['action'];
     $slug   = $_GET['slug'];
 
     if ($action === 'restore') {
-        // Découpage pour retrouver le nom d'origine (Ymd-His_nom)
         $parts = explode('_', $slug, 2);
         $original_name = isset($parts[1]) ? $parts[1] : $slug;
-        
         if (rename($trash_dir . $slug, $content_dir . $original_name)) {
             header('Location: ' . BASE_URL . 'index.php?status=restored');
             exit;
@@ -31,7 +29,6 @@ if (isset($_GET['action']) && isset($_GET['slug'])) {
 
     if ($action === 'purge') {
         $target = $trash_dir . $slug;
-        // Fonction récursive simple pour supprimer le dossier
         $files = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($target, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
@@ -46,19 +43,18 @@ if (isset($_GET['action']) && isset($_GET['slug'])) {
         }
     }
 }
-// --- FIN LOGIQUE CORBEILLE ---
 
 $slug = isset($_GET['project']) ? $_GET['project'] : '';
-
 if (empty($slug)) {
     header('Location: ' . BASE_URL . 'index.php');
     exit;
 }
 
-// Valeurs par défaut (Assainissement)
+// Valeurs par défaut
 $title = "Titre du Projet";
 $category = "Design";
 $summary = "";
+$cover = ""; 
 $htmlContent = "";
 $designSystemArray = [ 
     'h1' => [ 'fontSize' => '64px' ], 
@@ -69,10 +65,9 @@ $designSystemArray = [
     'p' =>  [ 'fontSize' => '18px' ] 
 ];
 
-// 2. Chargement des données réelles
 if (file_exists($content_dir . $slug . '/data.php')) {
     include $content_dir . $slug . '/data.php';
-    if (isset($content)) { $htmlContent = $content; } // Compatibilité ascendante
+    if (isset($content)) { $htmlContent = $content; }
     if (isset($designSystem)) { $designSystemArray = $designSystem; }
 }
 ?>
@@ -80,17 +75,17 @@ if (file_exists($content_dir . $slug . '/data.php')) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Éditeur Pro - <?php echo SITE_NAME; ?></title>
+    <title>ÉDITEUR - <?php echo SITE_NAME; ?></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap">
     <style id="dynamic-styles"></style>
     <style>
-        /* --- 0. CUSTOM SCROLLBAR --- */
-        ::-webkit-scrollbar { width: 4px; }
+        /* RESET RIGOUREUX */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #007bff; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0056b3; }
 
-        /* --- 1. CONFIGURATION DES THÈMES --- */
         :root {
             --sidebar-bg: #000000;
             --sidebar-border: #333333;
@@ -103,35 +98,36 @@ if (file_exists($content_dir . $slug . '/data.php')) {
 
         body.light-mode { --canvas-bg: #e0e0e0; --accent: #000000; }
         
-        body { 
-            margin: 0; font-family: 'Inter', sans-serif; background-color: var(--canvas-bg); 
-            color: var(--accent); display: flex; height: 100vh; width: 100vw; overflow: hidden; transition: background 0.3s; 
+        html, body { 
+            margin: 0; padding: 0; height: 100vh; 
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif; background-color: var(--canvas-bg); 
+            color: var(--accent);
         }
         
         .sidebar { 
             position: fixed; top: 0; left: 0; bottom: 0; width: 340px; 
             background-color: #000000; border-right: 1px solid var(--sidebar-border); 
             display: flex; flex-direction: column; z-index: 1000; color: #ffffff;
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: transform 0.3s ease;
         }
-        body.sidebar-hidden .sidebar { transform: translateX(-100%); }
+        body.sidebar-hidden .sidebar { transform: translateX(-340px); }
         
         .sidebar-header { padding: 40px 25px 25px; border-bottom: 1px solid var(--sidebar-border); display: flex; align-items: center; gap: 15px; }
         .sidebar-header h2 { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin: 0; color: var(--sidebar-muted); flex-grow: 1; }
         
-        .sidebar-scroll { flex-grow: 1; overflow-y: auto; padding: 20px 25px; }
+        .sidebar-scroll { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding: 20px 25px; }
         .sidebar-footer { padding: 25px; border-top: 1px solid var(--sidebar-border); background-color: #000000; display: flex; flex-direction: column; gap: 10px; }
 
-        .admin-input { width: 100%; background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-text); padding: 12px; margin-bottom: 12px; font-size: 11px; border-radius: 4px; outline: none; box-sizing: border-box; }
-
+        .admin-input { width: 100%; background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-text); padding: 12px; margin-bottom: 12px; font-size: 11px; border-radius: 4px; outline: none; display: block; }
         .section-label { font-size: 9px; color: var(--sidebar-muted); text-transform: uppercase; margin-top: 25px; margin-bottom: 10px; display: block; }
 
-        .grid-structure { display: flex; flex-direction: column; gap: 8px; }
-        .row-h { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .row-styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .row-align { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .row-float { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
-
+        .preview-card-container {
+            width: 100%; aspect-ratio: 16/9; background: #111; border: 1px solid var(--sidebar-border);
+            border-radius: 4px; overflow: hidden; margin-bottom: 8px; display: flex; align-items: center; justify-content: center;
+        }
+        .preview-card-container img { width: 100%; height: 100%; object-fit: cover; }
+        
         .tool-btn { 
             background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); 
             color: var(--sidebar-muted); height: 40px; cursor: pointer; font-size: 10px; font-weight: bold;
@@ -147,26 +143,53 @@ if (file_exists($content_dir . $slug . '/data.php')) {
         }
         .color-wrapper input[type="color"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
-        .gauge-row { background-color: var(--sidebar-input); padding: 15px; border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--sidebar-border); }
+        .gauge-row { background-color: var(--sidebar-input); padding: 15px; border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--sidebar-border); width: 100%; }
         .gauge-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 10px; color: var(--sidebar-muted); }
         .gauge-data { color: var(--sidebar-text); font-family: monospace; }
+        
+        input[type="range"] { width: 100%; accent-color: #fff; display: block; cursor: pointer; }
 
-        .canvas { flex-grow: 1; height: 100vh; overflow-y: auto; display: block; transition: padding-left 0.4s; box-sizing: border-box; padding: 80px 20px; }
-        body:not(.sidebar-hidden) .canvas { padding-left: 360px; }
+        /* CANVAS */
+        .canvas { 
+            position: absolute; top: 0; left: 340px; right: 0; bottom: 0;
+            overflow-y: auto; overflow-x: hidden; padding: 40px 20px;
+            transition: left 0.3s ease;
+        }
+        body.sidebar-hidden .canvas { left: 0; }
+
+        .paper-toolbar { max-width: 850px; margin: 0 auto 15px auto; display: flex; justify-content: center; gap: 10px; }
+        .btn-view {
+            background: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-muted);
+            padding: 8px 15px; border-radius: 4px; font-size: 10px; cursor: pointer; text-transform: uppercase;
+        }
+        .btn-view.active { color: #fff; border-color: #fff; }
 
         .paper { 
-            width: 100%; max-width: 850px; background: #ffffff; color: #000000; min-height: 1100px; height: auto; padding: 100px; 
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: block; box-sizing: border-box; margin: 0 auto; position: relative;
+            width: 100%; max-width: 850px; background: #ffffff; color: #000000; min-height: 1100px; padding: 100px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5); margin: 0 auto; position: relative;
         }
 
+        /* BLOCS ÉDITEUR */
         .block-container { position: relative; margin-bottom: 5px; width: 100%; clear: both; }
-        .delete-block { position: absolute; left: -18px; top: 0; background: #ff4d4d; color: white; width: 18px; height: 18px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; opacity: 0; transition: opacity 0.2s; z-index: 10; }
+        .delete-block { position: absolute; left: -18px; top: 0; background: #ff4d4d; color: white; width: 18px; height: 18px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; opacity: 0; z-index: 10; }
         .block-container:hover .delete-block { opacity: 1; }
+
+        /* NOUVELLE CLASSE POUR ÉVITER LES CONFLITS AVEC _ARTICLES.SCSS */
+        .editor-grid { display: flex; flex-wrap: wrap; width: 100%; }
+        .editor-grid > div { flex: 1; min-width: 200px; }
+        
+        .image-placeholder img { max-width: 100%; height: auto; display: block; }
 
         .sidebar-trigger { position: fixed; top: 20px; left: 20px; z-index: 500; background: var(--accent); color: var(--canvas-bg); border: none; width: 40px; height: 40px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         .btn-publish { background:#fff; color:#000; border:none; padding:15px; font-weight:900; cursor:pointer; text-transform:uppercase; }
         .btn-exit { color:var(--sidebar-muted); text-align:center; font-size:10px; text-decoration:none; border:1px solid var(--sidebar-border); padding:10px; border-radius:4px; text-transform:uppercase; font-weight:bold; }
+
+        .grid-structure { display: flex; flex-direction: column; gap: 8px; }
+        .row-h { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .row-styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .row-align { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .row-float { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
     </style>
 </head>
 <body class="dark-mode"> 
@@ -180,6 +203,17 @@ if (file_exists($content_dir . $slug . '/data.php')) {
         </div>
 
         <div class="sidebar-scroll">
+            <span class="section-label">APERÇU CARTE</span>
+            <div class="preview-card-container" id="preview-container">
+                <?php if(!empty($cover)): ?>
+                    <img src="<?php echo $cover; ?>" id="img-cover-preview">
+                <?php else: ?>
+                    <span style="font-size:8px; color:#444;">AUCUNE IMAGE</span>
+                <?php endif; ?>
+            </div>
+            <button class="tool-btn" style="height:30px; font-size:9px;" onclick="document.getElementById('inp-cover').click()">Changer l'image</button>
+            <input type="file" id="inp-cover" style="display:none;" onchange="handleCoverChange(this)">
+
             <span class="section-label">MÉTADONNÉES</span>
             <input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
             <textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo htmlspecialchars($summary); ?></textarea>
@@ -210,7 +244,7 @@ if (file_exists($content_dir . $slug . '/data.php')) {
             <span class="section-label">RÉGLAGES : <span id="target-label" style="color:#fff">H1</span></span>
             <div class="gauge-row">
                 <div class="gauge-info"><span>TAILLE POLICE</span><span class="gauge-data"><span id="val-size">64</span>px</span></div>
-                <input type="range" id="slider-size" style="width:100%; accent-color:#fff;" min="8" max="120" value="64" oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
+                <input type="range" id="slider-size" min="8" max="120" value="64" oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
             </div>
 
             <span class="section-label">DISPOSITION (FLOAT)</span>
@@ -221,7 +255,7 @@ if (file_exists($content_dir . $slug . '/data.php')) {
             </div>
             <div class="gauge-row">
                 <div class="gauge-info"><span>IMAGE WIDTH</span><span class="gauge-data"><span id="val-img-width">40</span>%</span></div>
-                <input type="range" id="slider-img-width" style="width:100%; accent-color:#fff;" min="10" max="100" value="40" oninput="updateImageWidth(this.value)">
+                <input type="range" id="slider-img-width" min="10" max="100" value="40" oninput="updateImageWidth(this.value)">
             </div>
 
             <span class="section-label">STRUCTURE (GRILLE)</span>
@@ -231,7 +265,7 @@ if (file_exists($content_dir . $slug . '/data.php')) {
             </div>
             <div class="gauge-row">
                 <div class="gauge-info"><span>GUTTER</span><span class="gauge-data"><span id="val-gutter">20</span>px</span></div>
-                <input type="range" id="slider-gutter" style="width:100%; accent-color:#fff;" min="0" max="100" value="20" oninput="updateGutter(this.value)">
+                <input type="range" id="slider-gutter" min="0" max="100" value="20" oninput="updateGutter(this.value)">
             </div>
         </div>
 
@@ -242,6 +276,11 @@ if (file_exists($content_dir . $slug . '/data.php')) {
     </aside>
 
     <main class="canvas">
+        <div class="paper-toolbar">
+            <button class="btn-view" onclick="setPaperWidth('375px', this)">Mobile</button>
+            <button class="btn-view" onclick="setPaperWidth('768px', this)">Tablette</button>
+            <button class="btn-view active" onclick="setPaperWidth('850px', this)">Desktop</button>
+        </div>
         <article class="paper" id="paper">
             <div class="block-container">
                 <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
@@ -256,28 +295,42 @@ if (file_exists($content_dir . $slug . '/data.php')) {
     let currentImageElement = null;
     let designSystem = <?php echo json_encode($designSystemArray); ?>;
     let currentGutter = '20px';
+    let coverData = "<?php echo $cover; ?>"; 
+    const LOREM_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
     function renderStyles() {
         let css = "";
         for (let tag in designSystem) {
             css += `.paper ${tag}, #main-title { font-size: ${designSystem[tag].fontSize}; margin-bottom:0.5em; outline:none; }\n`;
         }
-        css += `.grid-block { gap: ${currentGutter}; }`;
+        css += `.editor-grid { gap: ${currentGutter}; }`;
         document.getElementById('dynamic-styles').innerHTML = css;
+    }
+
+    function setPaperWidth(w, btn) {
+        document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const p = document.getElementById('paper');
+        p.style.maxWidth = w;
+        p.style.padding = (w === '850px') ? '100px' : '40px 20px';
+    }
+
+    function handleCoverChange(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                coverData = e.target.result;
+                document.getElementById('preview-container').innerHTML = `<img src="${coverData}">`;
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     function updateStyle(prop, val, displayId) {
         if(designSystem[currentTag]) {
             designSystem[currentTag][prop] = val; 
             document.getElementById(displayId).innerText = val.replace('px', ''); 
-            const targets = document.querySelectorAll(`.paper ${currentTag}, #main-title`);
-            targets.forEach(el => {
-                if(currentTag === 'h1' && (el.id === 'main-title' || el.tagName === 'H1')) {
-                    el.style.setProperty('font-size', val, 'important');
-                } else if (el.tagName.toLowerCase() === currentTag) {
-                    el.style.setProperty('font-size', val, 'important');
-                }
-            });
             renderStyles();
         }
     }
@@ -285,12 +338,12 @@ if (file_exists($content_dir . $slug . '/data.php')) {
     function updateGutter(val) {
         currentGutter = val + 'px';
         document.getElementById('val-gutter').innerText = val;
-        document.querySelectorAll('.grid-block').forEach(grid => grid.style.gap = currentGutter);
+        renderStyles();
     }
 
     function updateImageWidth(val) {
         if(currentImageElement) {
-            currentImageElement.style.setProperty('width', val + '%', 'important');
+            currentImageElement.style.width = val + '%';
             document.getElementById('val-img-width').innerText = val;
         }
     }
@@ -304,24 +357,17 @@ if (file_exists($content_dir . $slug . '/data.php')) {
             document.getElementById('slider-size').value = val;
             document.getElementById('val-size').innerText = val;
         }
-        if(tag === 'img' && imgEl) {
-            let currentW = parseInt(imgEl.style.width) || 40;
-            document.getElementById('slider-img-width').value = currentW;
-            document.getElementById('val-img-width').innerText = currentW;
-        }
     }
 
-    function addBlock(tag, txt = "Nouveau contenu rédactionnel...Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.") {
+    function addBlock(tag, txt = LOREM_TEXT) {
         const container = document.createElement('div');
         container.className = 'block-container';
         container.innerHTML = `<div class="delete-block" onclick="this.parentElement.remove()">✕</div><${tag} contenteditable="true" onfocus="setTarget('${tag}')">${txt}</${tag}>`;
         document.getElementById('editor-core').appendChild(container);
-        const newEl = container.querySelector(tag);
-        if(designSystem[tag]) newEl.style.setProperty('font-size', designSystem[tag].fontSize, 'important');
-        newEl.focus();
+        container.querySelector(tag).focus();
     }
 
-function addFloatBlock(type) {
+    function addFloatBlock(type) {
         const container = document.createElement('div');
         container.className = 'block-container';
         let width = (type === 'full') ? "100%" : "40%";
@@ -329,14 +375,11 @@ function addFloatBlock(type) {
         
         container.innerHTML = `
             <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
-            <div class="image-placeholder" 
-                 onclick="setTarget('img', this); event.stopPropagation();" 
-                 ondblclick="triggerUpload(this)" 
+            <div class="image-placeholder" onclick="setTarget('img', this); event.stopPropagation();" ondblclick="triggerUpload(this)" 
                  style="${style} background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">
                 IMAGE <input type="file" style="display:none;" onchange="handleImageSelect(this)">
             </div>
-            <p contenteditable="true" onfocus="setTarget('p')">Texte d'accompagnement...</p>`;
-            
+            <p contenteditable="true" onfocus="setTarget('p')">${LOREM_TEXT}</p>`;
         document.getElementById('editor-core').appendChild(container);
     }
 
@@ -344,39 +387,26 @@ function addFloatBlock(type) {
         const container = document.createElement('div');
         container.className = 'block-container';
         let items = "";
-        for(let i=0; i<cols; i++) items += `<div style="flex:1"><p contenteditable="true" onfocus="setTarget('p')">Contenu colonne...</p></div>`;
-        container.innerHTML = `<div class="delete-block" onclick="this.parentElement.remove()">✕</div><div class="grid-block" style="display:flex; gap:${currentGutter};">${items}</div>`;
+        for(let i=0; i<cols; i++) {
+            items += `<div style="flex:1"><p contenteditable="true" onfocus="setTarget('p')">${LOREM_TEXT}</p></div>`;
+        }
+        // NOUVELLE CLASSE editor-grid
+        container.innerHTML = `<div class="delete-block" onclick="this.parentElement.remove()">✕</div><div class="editor-grid">${items}</div>`;
         document.getElementById('editor-core').appendChild(container);
     }
 
-    function triggerUpload(el) {
-        el.querySelector('input').click();
-    }
+    function triggerUpload(el) { el.querySelector('input').click(); }
 
-function handleImageSelect(input) {
+    function handleImageSelect(input) {
         const file = input.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const placeholder = input.parentElement;
-                placeholder.innerHTML = `
-                    <img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">
-                    <input type="file" style="display:none;" onchange="handleImageSelect(this)">
-                `;
+                placeholder.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;"><input type="file" style="display:none;" onchange="handleImageSelect(this)">`;
                 const img = placeholder.querySelector('img');
-                
-                // SIMPLE CLIC : Sélection pour la réglette sans ouvrir l'explorateur
-                img.onclick = (event) => {
-                    event.stopPropagation();
-                    setTarget('img', placeholder);
-                };
-
-                // DOUBLE CLIC : Ouverture de l'explorateur pour changement d'image
-                img.ondblclick = (event) => {
-                    event.stopPropagation();
-                    triggerUpload(placeholder);
-                };
-                
+                img.onclick = (event) => { event.stopPropagation(); setTarget('img', placeholder); };
+                img.ondblclick = (event) => { event.stopPropagation(); triggerUpload(placeholder); };
                 setTarget('img', placeholder);
             };
             reader.readAsDataURL(file);
@@ -398,18 +428,11 @@ function handleImageSelect(input) {
         formData.append('htmlContent', document.getElementById('editor-core').innerHTML);
         formData.append('title', document.getElementById('main-title').innerText);
         formData.append('summary', document.getElementById('inp-summary').value);
+        formData.append('coverImage', coverData); 
         fetch('save.php', { method: 'POST', body: formData }).then(r => r.json()).then(res => alert(res.message));
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.paper h1, .paper h2, .paper h3, .paper h4, .paper h5, .paper p').forEach(el => {
-            let tag = el.tagName.toLowerCase();
-            if(designSystem[tag]) el.style.setProperty('font-size', designSystem[tag].fontSize, 'important');
-            el.setAttribute('contenteditable', 'true');
-            el.onfocus = () => setTarget(tag);
-        });
-        renderStyles();
-    });
+    window.addEventListener('DOMContentLoaded', () => { renderStyles(); });
     </script>
 </body>
 </html>

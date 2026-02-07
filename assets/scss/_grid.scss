@@ -35,6 +35,27 @@
     margin: 0; 
 }
 
+/* LIBÉRATION DES COLONNES DE L'ÉDITEUR */
+.editor-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 20px;
+    width: 100%;
+    
+    & > div {
+        flex: 1;
+        min-width: 250px; /* Aligne 3 colonnes sur desktop, empile sur mobile */
+    }
+}
+
+/* Fallback si tu n'as pas encore republié tes tests */
+.grid-block:not(.article-header-view) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+}
 /* RESPONSIVE MOBILE (Base 393px) */
 @media (max-width: 800px) {
     .master-grid {

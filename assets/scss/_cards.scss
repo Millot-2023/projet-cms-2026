@@ -1,0 +1,38 @@
+// --- CMS-2026 : Partial Cards ---
+// Gère l'uniformité visuelle de la grille de projets
+
+.grid-block {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+    }
+}
+
+.card-image {
+    width: 100%;
+    height: 220px; // Hauteur fixe pour la "grille militaire"
+    overflow: hidden;
+    background: #1a1a1a;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // Recadrage automatique sans déformation
+        display: block;
+    }
+}
+
+.card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    color: #000;
+}
