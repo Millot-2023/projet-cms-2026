@@ -199,6 +199,41 @@ body.evolution-open {
   margin: 0;
 }
 
+/* LIBÉRATION DES COLONNES DE L'ÉDITEUR */
+.editor-grid {
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-box-orient: horizontal !important;
+  -webkit-box-direction: normal !important;
+      -ms-flex-direction: row !important;
+          flex-direction: row !important;
+  -ms-flex-wrap: wrap !important;
+      flex-wrap: wrap !important;
+  gap: 20px;
+  width: 100%;
+}
+.editor-grid > div {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  min-width: 250px; /* Aligne 3 colonnes sur desktop, empile sur mobile */
+}
+
+/* Fallback si tu n'as pas encore republié tes tests */
+.grid-block:not(.article-header-view) {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 20px;
+}
+
 /* RESPONSIVE MOBILE (Base 393px) */
 @media (max-width: 800px) {
   .master-grid {
