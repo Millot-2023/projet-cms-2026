@@ -155,7 +155,7 @@ if (file_exists($content_dir . $slug . '/data.php')) {
         body:not(.sidebar-hidden) .canvas { padding-left: 360px; }
 
         .paper { 
-            width: 100%; max-width: 850px; background: #ffffff; color: #000000; min-height: 1100px; padding: 100px; 
+            width: 100%; max-width: 850px; background: #ffffff; color: #000000; min-height: 1100px; height: auto; padding: 100px; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: block; box-sizing: border-box; margin: 0 auto; position: relative;
         }
 
@@ -311,7 +311,7 @@ if (file_exists($content_dir . $slug . '/data.php')) {
         }
     }
 
-    function addBlock(tag, txt = "Nouveau contenu rédactionnel...") {
+    function addBlock(tag, txt = "Nouveau contenu rédactionnel...Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.") {
         const container = document.createElement('div');
         container.className = 'block-container';
         container.innerHTML = `<div class="delete-block" onclick="this.parentElement.remove()">✕</div><${tag} contenteditable="true" onfocus="setTarget('${tag}')">${txt}</${tag}>`;
@@ -321,17 +321,22 @@ if (file_exists($content_dir . $slug . '/data.php')) {
         newEl.focus();
     }
 
-    function addFloatBlock(type) {
+function addFloatBlock(type) {
         const container = document.createElement('div');
         container.className = 'block-container';
         let width = (type === 'full') ? "100%" : "40%";
         let style = (type === 'left') ? `float:left; margin:0 20px 10px 0; width:${width};` : (type === 'right') ? `float:right; margin:0 0 10px 20px; width:${width};` : `width:${width}; margin-bottom:20px; clear:both;`;
+        
         container.innerHTML = `
             <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
-            <div onclick="triggerUpload(this)" style="${style} background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">
+            <div class="image-placeholder" 
+                 onclick="setTarget('img', this); event.stopPropagation();" 
+                 ondblclick="triggerUpload(this)" 
+                 style="${style} background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">
                 IMAGE <input type="file" style="display:none;" onchange="handleImageSelect(this)">
             </div>
             <p contenteditable="true" onfocus="setTarget('p')">Texte d'accompagnement...</p>`;
+            
         document.getElementById('editor-core').appendChild(container);
     }
 
@@ -348,7 +353,7 @@ if (file_exists($content_dir . $slug . '/data.php')) {
         el.querySelector('input').click();
     }
 
-    function handleImageSelect(input) {
+function handleImageSelect(input) {
         const file = input.files[0];
         if (file) {
             const reader = new FileReader();
@@ -359,11 +364,19 @@ if (file_exists($content_dir . $slug . '/data.php')) {
                     <input type="file" style="display:none;" onchange="handleImageSelect(this)">
                 `;
                 const img = placeholder.querySelector('img');
+                
+                // SIMPLE CLIC : Sélection pour la réglette sans ouvrir l'explorateur
                 img.onclick = (event) => {
                     event.stopPropagation();
                     setTarget('img', placeholder);
+                };
+
+                // DOUBLE CLIC : Ouverture de l'explorateur pour changement d'image
+                img.ondblclick = (event) => {
+                    event.stopPropagation();
                     triggerUpload(placeholder);
                 };
+                
                 setTarget('img', placeholder);
             };
             reader.readAsDataURL(file);
