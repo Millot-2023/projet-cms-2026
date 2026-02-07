@@ -1,6 +1,6 @@
 <?php
 /**
- * PROJET-CMS-2026 - SAUVEGARDE (VERSION RIGOUREUSE)
+ * PROJET-CMS-2026 - SAUVEGARDE (VERSION RIGOUREUSE & OPTIMISÉE)
  * @author: Christophe Millot
  */
 
@@ -21,6 +21,7 @@ if ($data && isset($data['slug'])) {
 
     $file_path = $dir . "/data.php";
     
+    // Traitement du Design System
     $ds = $data['designSystem'] ?? [];
     if(is_string($ds)) {
         $ds = json_decode($ds, true);
@@ -28,11 +29,37 @@ if ($data && isset($data['slug'])) {
     
     $htmlContentRaw = $data['htmlContent'] ?? '';
 
+    // --- TRAITEMENT DE L'IMAGE DE COUVERTURE (EXTRACTION DU BASE64) ---
+    $coverValue = $data['coverImage'] ?? ($data['cover'] ?? '');
+    
+    // Si c'est du Base64 (commence par data:image...)
+    if (strpos($coverValue, 'data:image') === 0) {
+        // Extraction des données binaires
+        list($type, $coverData) = explode(';', $coverValue);
+        list(, $coverData)      = explode(',', $coverData);
+        $coverData = base64_decode($coverData);
+        
+        // Définition de l'extension
+        $ext = 'jpg';
+        if (strpos($type, 'png') !== false) { $ext = 'png'; }
+        if (strpos($type, 'webp') !== false) { $ext = 'webp'; }
+        
+        $fileName = "cover." . $ext;
+        $fullPath = $dir . "/" . $fileName;
+        
+        // On sauvegarde le fichier physique
+        file_put_contents($fullPath, $coverData);
+        
+        // On remplace la valeur Base64 par le nom du fichier pour data.php
+        $coverValue = $fileName;
+    }
+    // -----------------------------------------------------------------
+
     $content_file = "<?php\n";
     $content_file .= "/** Fichier généré par Studio CMS - " . date('d.m.Y H:i') . " **/\n\n";
     $content_file .= "\$title = " . var_export($data['title'] ?? 'Sans titre', true) . ";\n";
     
-    $coverValue = $data['coverImage'] ?? ($data['cover'] ?? '');
+    // Ici, $coverValue ne contient plus que "cover.jpg" au lieu de 1Mo de texte
     $content_file .= "\$cover = " . var_export($coverValue, true) . ";\n";
     
     $content_file .= "\$category = " . var_export($data['category'] ?? 'Design', true) . ";\n";
