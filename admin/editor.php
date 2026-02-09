@@ -71,7 +71,6 @@ if (file_exists($data_path)) {
     $data_loaded = include $data_path;
     
     if (is_array($data_loaded)) {
-        // Nouvelle structure (return array)
         $title = $data_loaded['title'] ?? $title;
         $category = $data_loaded['category'] ?? $category;
         $summary = $data_loaded['summary'] ?? $summary;
@@ -79,17 +78,14 @@ if (file_exists($data_path)) {
         $htmlContent = $data_loaded['htmlContent'] ?? $htmlContent;
         $designSystemArray = $data_loaded['designSystem'] ?? $designSystemArray;
     } else {
-        // Ancienne structure (variables $title, $content...)
         if (isset($title)) { $title = $title; }
         if (isset($content)) { $htmlContent = $content; }
         if (isset($designSystem)) { $designSystemArray = $designSystem; }
     }
 }
 
-// Construction de l'URL de la cover pour l'aperçu
 $cover_path = "";
 if (!empty($cover)) {
-    // Si c'est un nom de fichier (ex: cover.jpg), on ajoute le chemin relatif au dossier content
     $cover_path = (strpos($cover, 'data:image') === 0) ? $cover : $content_dir . $slug . '/' . $cover;
 }
 ?>
@@ -101,13 +97,10 @@ if (!empty($cover)) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap">
     <style id="dynamic-styles"></style>
     <style>
-        /* RESET RIGOUREUX */
         *, *::before, *::after { box-sizing: border-box; }
-
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #007bff; border-radius: 10px; }
-
         :root {
             --sidebar-bg: #000000;
             --sidebar-border: #333333;
@@ -117,16 +110,13 @@ if (!empty($cover)) {
             --canvas-bg: #1a1a1a;
             --accent: #ffffff;
         }
-
         body.light-mode { --canvas-bg: #e0e0e0; --accent: #000000; }
-        
         html, body { 
             margin: 0; padding: 0; height: 100vh; 
             overflow: hidden; 
             font-family: 'Inter', sans-serif; background-color: var(--canvas-bg); 
             color: var(--accent);
         }
-        
         .sidebar { 
             position: fixed; top: 0; left: 0; bottom: 0; width: 340px; 
             background-color: #000000; border-right: 1px solid var(--sidebar-border); 
@@ -134,14 +124,10 @@ if (!empty($cover)) {
             transition: transform 0.3s ease;
         }
         body.sidebar-hidden .sidebar { transform: translateX(-340px); }
-        
         .sidebar-header { padding: 40px 25px 25px; border-bottom: 1px solid var(--sidebar-border); display: flex; align-items: center; gap: 15px; }
         .sidebar-header h2 { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin: 0; color: var(--sidebar-muted); flex-grow: 1; }
-        
         .sidebar-scroll { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding: 20px 25px; }
         .sidebar-footer { padding: 25px; border-top: 1px solid var(--sidebar-border); background-color: #000000; display: flex; flex-direction: column; gap: 10px; }
-
-        /* --- CORRECTIF RIGUEUR : ISOLATION ÉDITEUR --- */
         #main-title, .paper h1 {
             font-size: 2.5rem !important; 
             line-height: 1.2 !important;
@@ -152,16 +138,13 @@ if (!empty($cover)) {
             display: block !important;
             margin-bottom: 1.5rem !important;
         }
-
         .admin-input { width: 100%; background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-text); padding: 12px; margin-bottom: 12px; font-size: 11px; border-radius: 4px; outline: none; display: block; }
         .section-label { font-size: 9px; color: var(--sidebar-muted); text-transform: uppercase; margin-top: 25px; margin-bottom: 10px; display: block; }
-
         .preview-card-container {
             width: 100%; aspect-ratio: 16/9; background: #111; border: 1px solid var(--sidebar-border);
             border-radius: 4px; overflow: hidden; margin-bottom: 8px; display: flex; align-items: center; justify-content: center;
         }
         .preview-card-container img { width: 100%; height: 100%; object-fit: cover; }
-        
         .tool-btn { 
             background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); 
             color: var(--sidebar-muted); height: 40px; cursor: pointer; font-size: 10px; font-weight: bold;
@@ -169,53 +152,41 @@ if (!empty($cover)) {
             display: flex; align-items: center; justify-content: center; width: 100%;
         }
         .tool-btn:hover { border-color: #555; color: #fff; }
-
         .color-wrapper {
             position: relative; width: 100%; height: 40px; border: 1px solid var(--sidebar-border); 
             border-radius: 4px; overflow: hidden; cursor: pointer; 
             background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
         }
         .color-wrapper input[type="color"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-
         .gauge-row { background-color: var(--sidebar-input); padding: 15px; border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--sidebar-border); width: 100%; }
         .gauge-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 10px; color: var(--sidebar-muted); }
         .gauge-data { color: var(--sidebar-text); font-family: monospace; }
-        
         input[type="range"] { width: 100%; accent-color: #fff; display: block; cursor: pointer; }
-
         .canvas { 
             position: absolute; top: 0; left: 340px; right: 0; bottom: 0;
             overflow-y: auto; overflow-x: hidden; padding: 40px 20px;
             transition: left 0.3s ease;
         }
         body.sidebar-hidden .canvas { left: 0; }
-
         .paper-toolbar { max-width: 850px; margin: 0 auto 15px auto; display: flex; justify-content: center; gap: 10px; }
         .btn-view {
             background: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-muted);
             padding: 8px 15px; border-radius: 4px; font-size: 10px; cursor: pointer; text-transform: uppercase;
         }
         .btn-view.active { color: #fff; border-color: #fff; }
-
         .paper { 
             width: 100%; max-width: 850px; background: #ffffff; color: #000000; min-height: 1100px; padding: 100px; 
             box-shadow: 0 40px 100px rgba(0,0,0,0.5); margin: 0 auto; position: relative;
         }
-
         .block-container { position: relative; margin-bottom: 5px; width: 100%; clear: both; }
         .delete-block { position: absolute; left: -18px; top: 0; background: #ff4d4d; color: white; width: 18px; height: 18px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; opacity: 0; z-index: 10; }
         .block-container:hover .delete-block { opacity: 1; }
-
         .editor-grid { display: flex; flex-wrap: wrap; width: 100%; }
         .editor-grid > div { flex: 1; min-width: 200px; }
-        
         .image-placeholder img { max-width: 100%; height: auto; display: block; }
-
         .sidebar-trigger { position: fixed; top: 20px; left: 20px; z-index: 500; background: var(--accent); color: var(--canvas-bg); border: none; width: 40px; height: 40px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-
         .btn-publish { background:#fff; color:#000; border:none; padding:15px; font-weight:900; cursor:pointer; text-transform:uppercase; }
         .btn-exit { color:var(--sidebar-muted); text-align:center; font-size:10px; text-decoration:none; border:1px solid var(--sidebar-border); padding:10px; border-radius:4px; text-transform:uppercase; font-weight:bold; }
-
         .grid-structure { display: flex; flex-direction: column; gap: 8px; }
         .row-h { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .row-styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -326,8 +297,9 @@ if (!empty($cover)) {
     let currentImageElement = null;
     let designSystem = <?php echo json_encode($designSystemArray); ?>;
     let currentGutter = '20px';
-    let coverData = "<?php echo (strpos($cover, 'data:image') === 0) ? $cover : ''; ?>"; 
-    const LOREM_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+    // CORRECTIF : Récupération de l'image de couverture existante
+    let coverData = "<?php echo (strpos($cover, 'data:image') === 0) ? $cover : $cover_path; ?>"; 
+    const LOREM_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit...";
 
     function renderStyles() {
         let css = "";
@@ -336,6 +308,26 @@ if (!empty($cover)) {
         }
         css += `.editor-grid { gap: ${currentGutter}; }`;
         document.getElementById('dynamic-styles').innerHTML = css;
+    }
+
+    // --- CORRECTIF DE PERSISTANCE : RÉACTIVATION DES ÉVÉNEMENTS ---
+    function attachEventsToExistingBlocks() {
+        // Rétablir les focus sur les titres et paragraphes
+        document.querySelectorAll('#editor-core [contenteditable="true"]').forEach(el => {
+            el.onfocus = () => setTarget(el.tagName.toLowerCase());
+        });
+
+        // Rétablir les événements sur les images existantes
+        document.querySelectorAll('.image-placeholder').forEach(placeholder => {
+            const img = placeholder.querySelector('img');
+            if (img) {
+                img.onclick = (event) => { event.stopPropagation(); setTarget('img', placeholder); };
+                img.ondblclick = (event) => { event.stopPropagation(); triggerUpload(placeholder); };
+            } else {
+                placeholder.onclick = () => { setTarget('img', placeholder); };
+                placeholder.ondblclick = () => { triggerUpload(placeholder); };
+            }
+        });
     }
 
     function setPaperWidth(w, btn) {
@@ -454,7 +446,6 @@ if (!empty($cover)) {
     function publishProject() {
         const formData = new FormData();
         let titleElement = document.getElementById('main-title');
-        if (!titleElement) { titleElement = document.querySelector('#editor-core h1'); }
         const projectTitle = titleElement ? titleElement.innerText : "Nouveau Projet";
 
         formData.append('slug', document.getElementById('inp-slug').value);
@@ -471,11 +462,15 @@ if (!empty($cover)) {
         })
         .catch(err => {
             console.error(err);
-            alert("Erreur de liaison : Vérifie ta connexion ou le fichier save.php");
+            alert("Erreur de liaison !");
         });
     }
 
-    window.addEventListener('DOMContentLoaded', () => { renderStyles(); });
+    // INITIALISATION : Rendu et Rattachement des événements
+    window.addEventListener('DOMContentLoaded', () => { 
+        renderStyles(); 
+        attachEventsToExistingBlocks();
+    });
     </script>
 </body>
 </html>

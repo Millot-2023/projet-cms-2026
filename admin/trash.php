@@ -1,6 +1,7 @@
 <?php
 /**
- * PROJET-CMS-2026 - GESTION DE LA CORBEILLE (FIX WARNING)
+ * PROJET-CMS-2026 - GESTION DE LA CORBEILLE (FIX WARNING & NAV)
+ * @author: Christophe Millot
  */
 require_once '../core/config.php';
 
@@ -14,7 +15,7 @@ include '../includes/header.php';
     <main id="main">
         <header class="section-header" style="margin-bottom: 2rem;">
             <h1 class="section-title">Corbeille (Archives)</h1>
-            <p><a href="../index.php" style="text-decoration: none; color: #666;">← Retour au Dashboard</a></p>
+            <p><a href="<?php echo BASE_URL; ?>index.php" style="text-decoration: none; color: #666;">← Retour au Dashboard</a></p>
         </header>
 
         <div class="grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">
@@ -27,26 +28,22 @@ include '../includes/header.php';
                     $data_file = $project_dir . '/data.php';
 
                     if (file_exists($data_file)) {
-                        // FIX : On inclut le fichier. S'il contient des variables comme $title, elles seront dispos.
+                        // FIX : Inclusion sécurisée
                         $project_data = include $data_file;
 
-                        /**
-                         * GESTION DU FORMAT DE DATA.PHP
-                         * On vérifie si $project_data est un tableau (cas du return)
-                         * Sinon on cherche si les variables $title et $summary ont été injectées
-                         */
                         $display_title = "Sans titre";
                         $display_summary = "Aucun résumé.";
+                        $display_cat = 'PROJET';
 
                         if (is_array($project_data)) {
                             $display_title = $project_data['title'] ?? $display_title;
                             $display_summary = $project_data['summary'] ?? $display_summary;
                             $display_cat = $project_data['category'] ?? 'PROJET';
                         } else {
-                            // Si data.php utilise des variables classiques ($title = ...)
-                            $display_title = isset($title) ? $title : $display_title;
-                            $display_summary = isset($summary) ? $summary : $display_summary;
-                            $display_cat = isset($category) ? $category : 'PROJET';
+                            // Support variables globales si le include ne retourne pas de tableau
+                            if (isset($title)) { $display_title = $title; }
+                            if (isset($summary)) { $display_summary = $summary; }
+                            if (isset($category)) { $display_cat = $category; }
                         }
 
                         $cover_path = $project_dir . '/cover.jpg';
