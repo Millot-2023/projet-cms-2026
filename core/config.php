@@ -1,7 +1,11 @@
 <?php
-// projet-cms-2026 - Configuration racine
-define('SITE_NAME', 'CMS EVOLUTION');
-define('BASE_URL', 'http://localhost/projet-cms-2026/');
+/**
+ * CMS-2026 v1.0 - Configuration racine
+ * @author: Christophe Millot
+ */
+
+define('SITE_NAME', 'CMS-2026 v1.0');
+define('BASE_URL', 'http://localhost/cms-2026-v1/');
 define('ASSETS_URL', BASE_URL . 'assets/');
 define('INC_PATH', __DIR__ . '/../includes/');
 
