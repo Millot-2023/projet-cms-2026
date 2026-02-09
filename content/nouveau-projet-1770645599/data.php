@@ -1,11 +1,11 @@
 <?php
-/** Fichier généré par Studio CMS - 09.02.2026 15:14 **/
+/** Fichier généré par Studio CMS - 09.02.2026 15:17 **/
 return array (
   'title' => 'card 01111',
   'cover' => 'cover.jpg',
   'category' => 'Design',
   'date' => '09.02.2026',
-  'updated' => '2026-02-09 15:14:11',
+  'updated' => '2026-02-09 15:17:19',
   'summary' => 'test de résumé presque definitif--1111111111111',
   'designSystem' => 
   array (
