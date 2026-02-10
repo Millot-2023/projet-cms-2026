@@ -16,33 +16,39 @@ require_once 'includes/hero.php';
             <?php
             $content_path = 'content/';
             if (is_dir($content_path)) {
-                // On récupère les dossiers en excluant les dossiers systèmes
                 $folders = array_diff(scandir($content_path), array('..', '.', '_trash'));
                 
                 foreach ($folders as $folder) {
-                    // Ignorer les dossiers commençant par un underscore ou les fichiers
                     if (strpos($folder, '_') === 0 || !is_dir($content_path . $folder)) continue;
 
-                    $data_file = $content_path . $folder . '/data.php';
+                    $project_dir = $content_path . $folder;
+                    $data_file = $project_dir . '/data.php';
+                    
                     if (file_exists($data_file)) {
                         $data_loaded = include $data_file;
 
-                        // Initialisation des variables (Format Hybride)
                         $title = "Sans titre";
                         $category = "Design";
-                        $date = "--/--/--";
+                        
+                        // 1. ON FORCE LA DATE DU DOSSIER PAR DÉFAUT
+                        $date = date("d.m.Y", filemtime($project_dir));
+                        
                         $cover = "";
                         $summary = "";
 
                         if (is_array($data_loaded)) {
                             $title = $data_loaded['title'] ?? $title;
                             $category = $data_loaded['category'] ?? $category;
-                            $date = $data_loaded['date'] ?? $date;
+                            
+                            // 2. ON NE REMPLACE QUE SI LA DATE PHP SEMBLE VALIDE (contient au moins un chiffre)
+                            if (!empty($data_loaded['date']) && preg_match('/[0-9]/', $data_loaded['date'])) {
+                                $date = $data_loaded['date'];
+                            }
+                            
                             $cover = $data_loaded['cover'] ?? "";
                             $summary = $data_loaded['summary'] ?? "";
                         }
 
-                        // Gestion de l'image de couverture
                         $image_src = "assets/img/image-template.png";
                         if (!empty($cover)) {
                             $image_src = (strpos($cover, 'data:image') === 0) ? $cover : $content_path . $folder . '/' . $cover;

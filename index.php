@@ -54,10 +54,7 @@ require_once 'includes/hero.php';
                     if (file_exists($data_file)) {
                         $title = "Sans titre";
                         $category = "Non classé";
-                        
-                        // FALLBACK SÉCURISÉ : On prend la date de création du dossier par défaut
                         $date = date("d.m.Y", filemtime($project_dir));
-                        
                         $cover = "";
                         $summary = "";
 
@@ -66,7 +63,6 @@ require_once 'includes/hero.php';
                         if (is_array($data_loaded)) {
                             $title    = $data_loaded['title'] ?? $folder;
                             $category = $data_loaded['category'] ?? "Non classé";
-                            // Si la date existe dans le fichier, on l'utilise, sinon on garde la date du dossier
                             if (!empty($data_loaded['date']) && $data_loaded['date'] !== "--/--/--") {
                                 $date = $data_loaded['date'];
                             }
@@ -86,6 +82,7 @@ require_once 'includes/hero.php';
                                 }
                             }
                         }
+                        // L'ACCOLADE ÉTAIT ICI ET CASSAIT TOUT - ELLE A ÉTÉ SUPPRIMÉE
                         ?>
                         <article class="grid-block" style="position: relative;">
                             <a href="javascript:void(0);" 
