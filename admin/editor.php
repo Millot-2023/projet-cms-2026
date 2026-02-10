@@ -1,6 +1,6 @@
 <?php
 /**
- * PROJET-CMS-2026 - ÉDITEUR DESIGN SYSTEM (VERSION v3.0 - ARCHITECTURE ISOLÉE)
+ * PROJET-CMS-2026 - ÉDITEUR DESIGN SYSTEM (VERSION v3.0)
  * @author: Christophe Millot
  */
 
@@ -50,20 +50,33 @@ if (empty($slug)) {
     exit;
 }
 
-// Chargement des données pour l'initialisation du cockpit
+// Valeurs par défaut
 $title = "Titre du Projet";
+$category = "Design";
 $summary = "";
 $cover = ""; 
-$designSystemArray = [];
+$htmlContent = "";
+$designSystemArray = [ 
+    'h1' => [ 'fontSize' => '64px' ], 
+    'h2' => [ 'fontSize' => '42px' ], 
+    'h3' => [ 'fontSize' => '30px' ], 
+    'h4' => [ 'fontSize' => '24px' ], 
+    'h5' => [ 'fontSize' => '18px' ], 
+    'p' =>  [ 'fontSize' => '18px' ] 
+];
 
+// --- CHARGEMENT HYBRIDE ---
 $data_path = $content_dir . $slug . '/data.php';
 if (file_exists($data_path)) {
     $data_loaded = include $data_path;
+    
     if (is_array($data_loaded)) {
         $title = $data_loaded['title'] ?? $title;
+        $category = $data_loaded['category'] ?? $category;
         $summary = $data_loaded['summary'] ?? $summary;
         $cover = $data_loaded['cover'] ?? $cover;
-        $designSystemArray = $data_loaded['designSystem'] ?? [];
+        $htmlContent = $data_loaded['htmlContent'] ?? $htmlContent;
+        $designSystemArray = $data_loaded['designSystem'] ?? $designSystemArray;
     }
 }
 
@@ -76,79 +89,330 @@ if (!empty($cover)) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>STUDIO V3 - <?php echo SITE_NAME; ?></title>
+    <title>ÉDITEUR - <?php echo SITE_NAME; ?></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap">
-    <link rel="stylesheet" href="../assets/css/main.css">
+    <style id="dynamic-styles"></style>
     <style>
-        body, html { margin: 0; padding: 0; height: 100vh; overflow: hidden; background: #1a1a1a; font-family: 'Inter', sans-serif; }
-        .studio-container { display: flex; height: 100vh; width: 100vw; }
+        *, *::before, *::after { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #007bff; border-radius: 10px; }
+        :root {
+            --sidebar-bg: #000000;
+            --sidebar-border: #333333;
+            --sidebar-text: #ffffff;
+            --sidebar-muted: #666666;
+            --sidebar-input: #1a1a1a;
+            --canvas-bg: #1a1a1a;
+            --accent: #ffffff;
+        }
+        body.light-mode { --canvas-bg: #e0e0e0; --accent: #000000; }
+        html, body { margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; background-color: var(--canvas-bg); color: var(--accent); }
         
-        .sidebar { width: 340px; background: #000000; border-right: 1px solid #333; display: flex; flex-direction: column; z-index: 100; color: #fff; }
-        .sidebar-scroll { flex: 1; overflow-y: auto; padding: 20px; }
+        .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 340px; background-color: #000000; border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; z-index: 1000; color: #ffffff; transition: transform 0.3s ease; }
+        body.sidebar-hidden .sidebar { transform: translateX(-340px); }
         
-        .canvas-area { flex: 1; position: relative; background: #1a1a1a; display: flex; align-items: center; justify-content: center; padding: 40px; }
+        .sidebar-header { padding: 40px 25px 25px; border-bottom: 1px solid var(--sidebar-border); display: flex; align-items: center; gap: 15px; }
+        .sidebar-header h2 { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin: 0; color: var(--sidebar-muted); flex-grow: 1; }
         
-        #viewport {
+        .sidebar-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px 25px; }
+        
+        .sidebar-footer { padding: 20px 25px; border-top: 1px solid var(--sidebar-border); background-color: #000000; flex-shrink: 0; }
+        
+        .admin-input { width: 100%; background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-text); padding: 12px; margin-bottom: 12px; font-size: 11px; border-radius: 4px; outline: none; }
+        .section-label { font-size: 9px; color: var(--sidebar-muted); text-transform: uppercase; margin-top: 25px; margin-bottom: 10px; display: block; }
+        
+        .preview-card-container { width: 100%; aspect-ratio: 16/9; background: #111; border: 1px solid var(--sidebar-border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; }
+        .preview-card-container img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .tool-btn { background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-muted); height: 40px; cursor: pointer; font-size: 10px; font-weight: bold; border-radius: 4px; transition: 0.2s; text-transform: uppercase; display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 5px; }
+        .tool-btn:hover { border-color: #555; color: #fff; }
+
+        .btn-gmail { background:#ea4335 !important; color:#ffffff !important; border:none; padding:15px; font-weight:900; cursor:pointer; text-transform:uppercase; font-size:10px; border-radius:4px; width: 100%; margin-bottom: 10px; display: block; text-align: center; }
+        .btn-publish { background:#ffffff !important; color:#000000 !important; border:none; padding:15px; font-weight:900; cursor:pointer; text-transform:uppercase; font-size:10px; border-radius:4px; width: 100%; margin-bottom: 10px; display: block; text-align: center; }
+        .btn-exit { color:var(--sidebar-muted); text-align:center; font-size:10px; text-decoration:none; border:1px solid var(--sidebar-border); padding:10px; border-radius:4px; text-transform:uppercase; font-weight:bold; display: block; width: 100%; }
+
+        .gauge-row { background-color: var(--sidebar-input); padding: 15px; border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--sidebar-border); }
+        .gauge-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 10px; color: var(--sidebar-muted); }
+        input[type="range"] { width: 100%; accent-color: #fff; cursor: pointer; }
+
+        .canvas { position: absolute; top: 0; left: 340px; right: 0; bottom: 0; overflow-y: auto; padding: 40px 20px; transition: left 0.3s ease; }
+        body.sidebar-hidden .canvas { left: 0; }
+        
+        .paper {
             width: 100%;
-            max-width: 900px;
-            height: 100%;
-            border: none;
-            background: #fff;
-            box-shadow: 0 30px 100px rgba(0,0,0,0.5);
-            transition: width 0.3s ease;
+            max-width: 850px;
+            background: #ffffff;
+            color: #000000;
+            min-height: 1100px;
+            padding: 0px 60px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            margin: 0 auto;
+            position: relative;
+            display: flow-root; 
+            transition: width 0.3s ease, max-width 0.3s ease;
         }
 
-        .admin-input { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 12px; margin-bottom: 15px; border-radius: 4px; font-size: 11px; outline: none; }
-        .section-label { font-size: 9px; color: #666; text-transform: uppercase; margin: 20px 0 10px; display: block; letter-spacing: 1px; }
-        .tool-btn { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; cursor: pointer; font-size: 10px; width: 100%; border-radius: 4px; margin-bottom: 5px; text-transform: uppercase; transition: 0.2s; }
-        .tool-btn:hover { background: #222; border-color: #555; }
-        .btn-publish { background: #fff !important; color: #000 !important; font-weight: 900; padding: 15px; margin-top: 20px; border: none; }
+        #main-title {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            line-height: 0.8 !important; 
+            display: inline-block; 
+            width: 100%;
+        }
+
+        .block-container { position: relative; margin-bottom: 5px; width: 100%; clear: both; }
+        .delete-block { position: absolute; left: -18px; top: 0; background: #ff4d4d; color: white; width: 18px; height: 18px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; opacity: 0; z-index: 10; }
+        .block-container:hover .delete-block { opacity: 1; }
+        
+        .row-h { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .row-styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .row-float { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+        .sidebar-trigger { position: fixed; top: 20px; left: 20px; z-index: 500; background: var(--accent); color: var(--canvas-bg); border: none; width: 40px; height: 40px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        .responsive-switcher { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
     </style>
 </head>
-<body class="v3-studio">
+<body class="dark-mode"> 
+    <button class="sidebar-trigger" onclick="toggleSidebar()">☰</button>
 
-    <div class="studio-container">
-        
-        <aside class="sidebar">
-            <div class="sidebar-scroll">
-                <h2 style="font-size: 10px; letter-spacing: 3px; color: #666; margin-bottom: 30px;">CMS-2026 STUDIO</h2>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span style="color:#ff4d4d; cursor:pointer; font-weight:bold;" onclick="toggleSidebar()">✕</span>
+            <h2><?php echo SITE_NAME; ?></h2>
+            <div class="theme-toggle" onclick="toggleTheme()" id="t-icon" style="cursor:pointer">🌙</div>
+        </div>
 
-                <span class="section-label">Projet Actuel</span>
-                <input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
-                <textarea id="inp-summary" class="admin-input" placeholder="Résumé du projet..." style="height:80px;"><?php echo htmlspecialchars($summary); ?></textarea>
+        <div class="sidebar-scroll">
+            <span class="section-label">APERÇU CARTE</span>
+            <div class="preview-card-container" id="preview-container">
+                <?php if(!empty($cover_path)): ?>
+                    <img src="<?php echo $cover_path; ?>" id="img-cover-preview">
+                <?php else: ?>
+                    <span style="font-size:8px; color:#444;">AUCUNE IMAGE</span>
+                <?php endif; ?>
+            </div>
+            <button class="tool-btn" style="height:30px; font-size:9px;" onclick="document.getElementById('inp-cover').click()">Changer l'image</button>
+            <input type="file" id="inp-cover" style="display:none;" onchange="handleCoverChange(this)">
 
-                <span class="section-label">Structure</span>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                    <button class="tool-btn" onclick="studio.addBlock('h2')">Titre H2</button>
-                    <button class="tool-btn" onclick="studio.addBlock('h3')">Titre H3</button>
-                    <button class="tool-btn" onclick="studio.addBlock('p')">Texte</button>
-                    <button class="tool-btn" onclick="studio.addBlock('image')">Image</button>
-                </div>
+            <span class="section-label">MÉTADONNÉES</span>
+            <input type="text" id="inp-slug" class="admin-input" value="<?php echo htmlspecialchars($slug); ?>" readonly>
+            <textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo htmlspecialchars($summary); ?></textarea>
 
-                <span class="section-label">Design System</span>
-                <div class="gauge-row">
-                    <input type="range" id="slider-size" min="8" max="150" value="80">
-                </div>
-
-                <button id="btn-save" class="tool-btn btn-publish">Mettre à jour</button>
+            <span class="section-label">TYPOGRAPHIE</span>
+            <div class="row-h">
+                <button class="tool-btn" onclick="addBlock('h1', 'Titre H1')">H1</button>
+                <button class="tool-btn" onclick="addBlock('h2', 'Titre H2')">H2</button>
+                <button class="tool-btn" onclick="addBlock('h3', 'Titre H3')">H3</button>
+                <button class="tool-btn" onclick="addBlock('h4', 'Titre H4')">H4</button>
+                <button class="tool-btn" onclick="addBlock('h5', 'Titre H5')">H5</button>
+            </div>
+            <button class="tool-btn" onclick="addBlock('p')" style="margin-top:8px;">Paragraphe</button>
+            <div class="row-styles" style="margin-top:8px;">
+                <button class="tool-btn" onclick="execStyle('bold')">B</button>
+                <button class="tool-btn" onclick="execStyle('italic')">I</button>
+                <div class="color-wrapper" style="position: relative; width: 100%; height: 40px; border: 1px solid var(--sidebar-border); border-radius: 4px; overflow: hidden; background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);"><input type="color" oninput="changeTextColor(this.value)" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"></div>
             </div>
 
-            <div style="padding: 20px; border-top: 1px solid #333;">
-                <a href="<?php echo BASE_URL; ?>index.php" style="color: #666; text-decoration: none; font-size: 10px; text-transform: uppercase;">⬅ Retour au Cockpit</a>
+            <span class="section-label">RÉGLAGES : <span id="target-label" style="color:#fff">H1</span></span>
+            <div class="gauge-row">
+                <div class="gauge-info"><span>TAILLE POLICE</span><span id="val-size">64</span>px</div>
+                <input type="range" id="slider-size" min="8" max="120" value="64" oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
             </div>
-        </aside>
 
-        <main class="canvas-area">
-            <iframe id="viewport" src="canvas.php?project=<?php echo $slug; ?>"></iframe>
-        </main>
+            <span class="section-label">DISPOSITION (FLOAT)</span>
+            <div class="row-float">
+                <button class="tool-btn" onclick="addFloatBlock('left')">GAUCHE</button>
+                <button class="tool-btn" onclick="addFloatBlock('full')">LARGE</button>
+                <button class="tool-btn" onclick="addFloatBlock('right')">DROITE</button>
+            </div>
+            <div class="gauge-row">
+                <div class="gauge-info"><span>IMAGE WIDTH</span><span id="val-img-width">40</span>%</div>
+                <input type="range" id="slider-img-width" min="10" max="100" value="40" oninput="updateImageWidth(this.value)">
+            </div>
+        </div>
 
-    </div>
+        <div class="sidebar-footer">
+            <button onclick="exportForGmail()" class="btn-gmail">✉️ EXPORT GMAIL</button>
+            <button onclick="publishProject()" class="btn-publish">PUBLIER</button>
+            <a href="<?php echo BASE_URL; ?>index.php" class="btn-exit">QUITTER</a>
+        </div>
+    </aside>
 
-    <script src="../assets/js/editor-engine.js"></script>
+    <main class="canvas">
+        <div class="responsive-switcher">
+            <button class="tool-btn" style="width: 100px;" onclick="resizePaper('100%')">DESKTOP</button>
+            <button class="tool-btn" style="width: 100px;" onclick="resizePaper('768px')">TABLETTE</button>
+            <button class="tool-btn" style="width: 100px;" onclick="resizePaper('375px')">MOBILE</button>
+        </div>
+        <article class="paper" id="paper">
+            <div class="block-container">
+                <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
+                <h1 id="main-title" contenteditable="true" onfocus="setTarget('h1')"><?php echo htmlspecialchars($title); ?></h1>
+            </div>
+            <div id="editor-core"><?php echo $htmlContent; ?></div>
+        </article>
+    </main>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("V3 Studio : Mode Isolé activé.");
+    let currentTag = 'h1';
+    let currentImageElement = null;
+    let designSystem = <?php echo json_encode($designSystemArray); ?>;
+    let coverData = "<?php echo $cover; ?>"; 
+    const LOREM_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.<br><br>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br><br>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.";
+
+    function renderStyles() {
+        let css = ".paper { display: flow-root; padding-top: 40px !important; }\n"; 
+        for (let tag in designSystem) {
+            css += `.paper ${tag}, #main-title { 
+                font-size: ${designSystem[tag].fontSize}; 
+                margin-top: 0 !important; 
+                line-height: 1.1 !important; 
+                margin-bottom: 4em; 
+                outline: none; 
+            }\n`;
+        }
+        document.getElementById('dynamic-styles').innerHTML = css;
+    }
+
+    function resizePaper(width) {
+        const paper = document.getElementById('paper');
+        paper.style.width = width;
+        if(width === '100%') {
+            paper.style.maxWidth = "850px";
+        } else {
+            paper.style.maxWidth = width;
+        }
+    }
+
+    function updateStyle(prop, val, displayId) {
+        if(designSystem[currentTag]) {
+            designSystem[currentTag][prop] = val; 
+            document.getElementById(displayId).innerText = val.replace('px', ''); 
+            renderStyles();
+        }
+    }
+
+    function updateImageWidth(val) {
+        if(currentImageElement) {
+            currentImageElement.style.width = val + '%';
+            document.getElementById('val-img-width').innerText = val;
+        }
+    }
+
+    function setTarget(tag, imgEl = null) {
+        currentTag = tag;
+        currentImageElement = imgEl;
+        document.getElementById('target-label').innerText = tag.toUpperCase();
+        if(designSystem[tag]) {
+            let val = parseInt(designSystem[tag].fontSize);
+            document.getElementById('slider-size').value = val;
+            document.getElementById('val-size').innerText = val;
+        }
+    }
+
+    function addBlock(tag, txt = LOREM_TEXT) {
+        const container = document.createElement('div');
+        container.className = 'block-container';
+        container.innerHTML = `<div class="delete-block" onclick="this.parentElement.remove()">✕</div><${tag} contenteditable="true" onfocus="setTarget('${tag}')">${txt}</${tag}>`;
+        document.getElementById('editor-core').appendChild(container);
+        container.querySelector(tag).focus();
+    }
+
+    function addFloatBlock(type) {
+        const container = document.createElement('div');
+        container.className = 'block-container';
+        let width = (type === 'full') ? "100%" : "40%";
+        let style = (type === 'left') ? `float:left; margin:0 20px 10px 0; width:${width};` : (type === 'right') ? `float:right; margin:0 0 10px 20px; width:${width};` : `width:${width}; margin-bottom:20px; clear:both;`;
+        container.innerHTML = `<div class="delete-block" onclick="this.parentElement.remove()">✕</div><div class="image-placeholder" onclick="setTarget('img', this); event.stopPropagation();" ondblclick="triggerUpload(this)" style="${style} background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">IMAGE <input type="file" style="display:none;" onchange="handleImageSelect(this)"></div><p contenteditable="true" onfocus="setTarget('p')">${LOREM_TEXT}</p>`;
+        document.getElementById('editor-core').appendChild(container);
+    }
+
+    function triggerUpload(el) { el.querySelector('input').click(); }
+
+    function handleImageSelect(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const placeholder = input.parentElement;
+                placeholder.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;"><input type="file" style="display:none;" onchange="handleImageSelect(this)">`;
+                const img = placeholder.querySelector('img');
+                img.onclick = (event) => { event.stopPropagation(); setTarget('img', placeholder); };
+                img.ondblclick = (event) => { event.stopPropagation(); triggerUpload(placeholder); };
+                setTarget('img', placeholder);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function handleCoverChange(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                coverData = e.target.result; 
+                document.getElementById('preview-container').innerHTML = `<img src="${coverData}">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function publishProject() {
+        const slug = document.getElementById('inp-slug').value;
+        const title = document.getElementById('main-title').innerText;
+        const summary = document.getElementById('inp-summary').value;
+        const htmlContent = document.getElementById('editor-core').innerHTML;
+
+        const formData = new FormData();
+        formData.append('slug', slug);
+        formData.append('title', title);
+        formData.append('summary', summary);
+        formData.append('coverImage', coverData); 
+        formData.append('htmlContent', htmlContent);
+        formData.append('designSystem', JSON.stringify(designSystem));
+
+        fetch('save.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === "success") {
+                alert(data.message);
+                if(data.fileName) {
+                    coverData = data.fileName;
+                }
+            } else {
+                alert("Erreur : " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("ERREUR RÉSEAU");
         });
+    }
+
+    function exportForGmail() {
+        const titleText = document.getElementById('main-title').innerText;
+        const editorCore = document.getElementById('editor-core');
+        const temp = document.createElement('div');
+        temp.innerHTML = editorCore.innerHTML;
+        temp.querySelectorAll('.delete-block, input').forEach(x => x.remove());
+        for (let tag in designSystem) {
+            temp.querySelectorAll(tag).forEach(el => { el.style.fontSize = designSystem[tag].fontSize; el.style.fontFamily = "Arial, sans-serif"; });
+        }
+        const emailTemplate = `<div style="padding:40px; font-family:Arial; max-width:800px; margin:auto;"><h1>${titleText}</h1>${temp.innerHTML}</div>`;
+        const blob = new Blob([emailTemplate], { type: 'text/html' });
+        const data = [new ClipboardItem({ 'text/html': blob })];
+        navigator.clipboard.write(data).then(() => alert("COPIÉ POUR GMAIL !"));
+    }
+
+    function toggleSidebar() { document.body.classList.toggle('sidebar-hidden'); }
+    function execStyle(cmd) { document.execCommand(cmd, false, null); }
+    function changeTextColor(color) { document.execCommand('foreColor', false, color); }
+    function toggleTheme() { document.body.classList.toggle('light-mode'); }
+
+    window.addEventListener('DOMContentLoaded', renderStyles);
     </script>
 </body>
 </html>
