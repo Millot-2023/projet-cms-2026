@@ -3,17 +3,15 @@
  * PROJET-CMS-2026 - GESTION DE LA CORBEILLE
  */
 
-// 1. On remonte d'un dossier pour trouver la config
 require_once '../core/config.php';
 
-// 2. Sécurité locale (déjà présent dans ton header, mais bien de le garder ici)
 $is_local = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['SERVER_NAME'] === 'localhost');
 if (!$is_local) { exit("Accès réservé au mode local."); }
 
+// Note : Ton chemin pointait vers ../content/_trash/
 $trash_dir = "../content/_trash/";
 $archived_projects = [];
 
-// 3. Lecture des projets supprimés
 if (is_dir($trash_dir)) {
     $items = scandir($trash_dir);
     foreach ($items as $item) {
@@ -23,7 +21,6 @@ if (is_dir($trash_dir)) {
     }
 }
 
-// 4. INCLUSION DU HEADER (On remonte d'un dossier)
 require_once '../includes/header.php'; 
 ?>
 
@@ -38,20 +35,37 @@ require_once '../includes/header.php';
                 <a href="<?php echo BASE_URL; ?>index.php" style="color: #000; font-weight: bold;">Retour au Dashboard</a>
             </div>
         <?php else: ?>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 50px;">
                 <?php foreach ($archived_projects as $folder): ?>
-                    <div style="border: 1px solid #eee; padding: 25px; border-radius: 12px; background: #fff;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 16px;"><?php echo htmlspecialchars($folder); ?></h3>
-                        <div style="display: flex; gap: 10px; margin-top: 20px;">
-                            <a href="editor.php?action=restore&slug=<?php echo urlencode($folder); ?>" 
-                               style="background: #000; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold;">
-                               RESTAURER
-                            </a>
-                            <a href="editor.php?action=purge&slug=<?php echo urlencode($folder); ?>" 
-                               onclick="return confirm('Supprimer définitivement ce dossier ?')"
-                               style="background: #ff4d4d; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold;">
-                               PURGER
-                            </a>
+                    <div style="border: 1px solid #eee; border-radius: 12px; background: #fff; overflow: hidden; display: flex; flex-direction: column;">
+                        
+                        <div style="width: 100%; height: 180px; background: #f0f0f0; overflow: hidden;">
+                            <?php 
+                            $image_path = $trash_dir . $folder . '/cover.jpg';
+                            $image_url = BASE_URL . 'content/_trash/' . $folder . '/cover.jpg';
+                            
+                            if (file_exists($image_path)): ?>
+                                <img src="<?php echo $image_url; ?>" style="width: 100%; height: 100%; object-fit: cover;" alt="Aperçu">
+                            <?php else: ?>
+                                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ccc; font-size: 12px;">PAS D'IMAGE</div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div style="padding: 20px;">
+                            <h3 style="margin: 0 0 10px 0; font-size: 16px; text-transform: uppercase; font-weight: 700;">
+                                <?php echo htmlspecialchars($folder); ?>
+                            </h3>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <a href="editor.php?action=restore&slug=<?php echo urlencode($folder); ?>" 
+                                   style="background: #000; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 11px; font-weight: bold;">
+                                   RESTAURER
+                                </a>
+                                <a href="editor.php?action=purge&slug=<?php echo urlencode($folder); ?>" 
+                                   onclick="return confirm('Supprimer définitivement ce dossier ?')"
+                                   style="border: 1px solid #ff4d4d; color: #ff4d4d; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 11px; font-weight: bold;">
+                                   PURGER
+                                </a>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -60,7 +74,4 @@ require_once '../includes/header.php';
     </div>
 </main>
 
-<?php 
-// 5. INCLUSION DU FOOTER (On remonte d'un dossier)
-require_once '../includes/footer.php'; 
-?>
+<?php require_once '../includes/footer.php'; ?>

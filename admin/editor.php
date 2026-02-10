@@ -55,7 +55,7 @@ $title = "Titre du Projet";
 $category = "Design";
 $summary = "";
 $cover = ""; 
-$date = date("d/m/Y"); // Restauration de la date du jour
+$date = date("d/m/Y");
 $htmlContent = "";
 $designSystemArray = [ 
     'h1' => [ 'fontSize' => '64px' ], 
@@ -92,8 +92,9 @@ if (file_exists($data_path)) {
 
 $cover_path = "";
 if (!empty($cover)) {
-    // Correction du chemin pour l'affichage dans l'éditeur
-    $cover_path = (strpos($cover, 'data:image') === 0) ? $cover : BASE_URL . 'content/' . $slug . '/' . $cover;
+    // Correction du chemin pour gérer le dossier corbeille si nécessaire
+    $sub_folder = $is_in_trash ? 'content/_trash/' : 'content/';
+    $cover_path = (strpos($cover, 'data:image') === 0) ? $cover : BASE_URL . $sub_folder . $slug . '/' . $cover;
 }
 ?>
 <!DOCTYPE html>
@@ -134,7 +135,6 @@ if (!empty($cover)) {
         .preview-card-container { width: 100%; aspect-ratio: 16/9; background: #111; border: 1px solid var(--sidebar-border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; }
         .preview-card-container img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Voile gris pour la corbeille */
         .img-trash { filter: grayscale(100%) opacity(0.5); }
 
         .tool-btn { background-color: var(--sidebar-input); border: 1px solid var(--sidebar-border); color: var(--sidebar-muted); height: 40px; cursor: pointer; font-size: 10px; font-weight: bold; border-radius: 4px; transition: 0.2s; text-transform: uppercase; display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 5px; }
@@ -364,34 +364,37 @@ if (!empty($cover)) {
     function publishProject() {
         try {
             var elSlug = document.getElementById('inp-slug');
-            var elDate = document.getElementById('inp-date');
             var elTitle = document.getElementById('main-title');
             var elSummary = document.getElementById('inp-summary');
             var elCore = document.getElementById('editor-core');
 
-            var titleVal = elTitle ? elTitle.innerText : "Sans titre";
-            var slugVal = elSlug ? elSlug.value : "";
-            var dateVal = elDate ? elDate.value : "";
-            var summaryVal = elSummary ? elSummary.value : "";
-            var htmlVal = elCore ? elCore.innerHTML : "";
+            var formData = new FormData();
+            formData.append('slug', elSlug ? elSlug.value : "");
+            formData.append('title', elTitle ? elTitle.innerText : "Sans titre");
+            formData.append('summary', elSummary ? elSummary.value : "");
+            formData.append('htmlContent', elCore ? elCore.innerHTML : "");
+            formData.append('coverImage', coverData);
+            formData.append('designSystem', JSON.stringify(designSystem));
 
-        fetch('save.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.status === "success") {
-                alert(data.message);
-                if(data.fileName) { coverData = data.fileName; }
-            } else {
-                alert("Erreur : " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("ERREUR RÉSEAU");
-        });
+            fetch('save.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === "success") {
+                    alert(data.message);
+                } else {
+                    alert("Erreur : " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("ERREUR RÉSEAU");
+            });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     function exportForGmail() {
