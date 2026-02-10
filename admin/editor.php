@@ -212,12 +212,39 @@ if (!empty($cover)) {
                 <input type="range" id="slider-size" min="8" max="120" value="64" oninput="updateStyle('fontSize', this.value+'px', 'val-size')">
             </div>
 
+
+
             <span class="section-label">DISPOSITION (FLOAT)</span>
-            <div class="row-float">
-                <button class="tool-btn" onclick="addFloatBlock('left')">GAUCHE</button>
-                <button class="tool-btn" onclick="addFloatBlock('full')">LARGE</button>
-                <button class="tool-btn" onclick="addFloatBlock('right')">DROITE</button>
-            </div>
+<div class="row-float">
+    <button class="tool-btn" onclick="addFloatBlock('left')" title="Aligner à gauche">
+        <svg width="24" height="18" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="2" width="10" height="10" fill="currentColor"/>
+            <line x1="14" y1="3" x2="24" y2="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="14" y1="7" x2="24" y2="7" stroke="currentColor" stroke-width="2"/>
+            <line x1="14" y1="11" x2="24" y2="11" stroke="currentColor" stroke-width="2"/>
+            <line x1="0" y1="15" x2="24" y2="15" stroke="currentColor" stroke-width="2"/>
+        </svg>
+    </button>
+
+    <button class="tool-btn" onclick="addFloatBlock('full')" title="Pleine largeur">
+        <svg width="24" height="18" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="24" height="10" fill="currentColor"/>
+            <line x1="0" y1="14" x2="24" y2="14" stroke="currentColor" stroke-width="2"/>
+            <line x1="0" y1="18" x2="24" y2="18" stroke="currentColor" stroke-width="2"/>
+        </svg>
+    </button>
+
+    <button class="tool-btn" onclick="addFloatBlock('right')" title="Aligner à droite">
+        <svg width="24" height="18" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="2" width="10" height="10" fill="currentColor"/>
+            <line x1="0" y1="3" x2="10" y2="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="0" y1="7" x2="10" y2="7" stroke="#666666" stroke="currentColor" stroke-width="2"/>
+            <line x1="0" y1="11" x2="10" y2="11" stroke="currentColor" stroke-width="2"/>
+            <line x1="0" y1="15" x2="24" y2="15" stroke="currentColor" stroke-width="2"/>
+        </svg>
+    </button>
+</div>
+
             <div class="gauge-row">
                 <div class="gauge-info"><span>IMAGE WIDTH</span><span id="val-img-width">40</span>%</div>
                 <input type="range" id="slider-img-width" min="10" max="100" value="40" oninput="updateImageWidth(this.value)">
