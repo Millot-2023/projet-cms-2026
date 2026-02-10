@@ -9,35 +9,31 @@ $slug = $_GET['slug'] ?? '';
 $data_file = 'content/' . $slug . '/data.php';
 
 if ($slug && file_exists($data_file)) {
-    // 1. CHARGEMENT HYBRIDE
+    // 1. CHARGEMENT
     $data_loaded = include $data_file;
 
-    // Valeurs par défaut pour éviter les Warnings
-    $title = $title ?? "Sans titre";
-    $category = $category ?? "Design";
-    $date = $date ?? date('d/m/Y');
-    $summary = $summary ?? "";
-    $designSystem = $designSystem ?? [];
-    $htmlContent = $htmlContent ?? 'Aucun contenu.';
-
-    // 2. EXTRACTION SI FORMAT TABLEAU
+    // 2. EXTRACTION ET VALEURS PAR DÉFAUT
     if (is_array($data_loaded)) {
-        $title        = $data_loaded['title'] ?? $title;
-        $category     = $data_loaded['category'] ?? $category;
-        $date         = $data_loaded['date'] ?? $date;
-        $summary      = $data_loaded['summary'] ?? $summary;
-        $designSystem = $data_loaded['designSystem'] ?? $designSystem;
-        $htmlContent  = $data_loaded['htmlContent'] ?? $htmlContent;
+        $title        = $data_loaded['title'] ?? "Sans titre";
+        $category     = $data_loaded['category'] ?? "Design";
+        $date         = $data_loaded['date'] ?? date('d/m/Y');
+        $summary      = $data_loaded['summary'] ?? "";
+        $designSystem = $data_loaded['designSystem'] ?? [];
+        $htmlContent  = $data_loaded['htmlContent'] ?? 'Aucun contenu.';
+    } else {
+        // Au cas où le fichier existe mais est vide ou mal formé
+        header("Location: " . BASE_URL . "index.php");
+        exit;
     }
 } else {
-    header("Location: index.php");
+    header("Location: " . BASE_URL . "index.php");
     exit;
 }
 
 require_once 'includes/header.php'; 
 require_once 'includes/hero.php'; 
 
-// Sécurité : On s'assure que le contenu ne contient aucune balise 'contenteditable' résiduelle
+// Sécurité : Nettoyage des attributs d'édition pour le visiteur
 $finalHtml = str_replace('contenteditable="true"', '', $htmlContent);
 ?>
 
@@ -58,7 +54,6 @@ if (isset($designSystem) && is_array($designSystem)) {
 
 /* 2. STRUCTURE ET FLUX */
 .master-grid {
-    /*margin-top: 50px;*/
     clear: both;
     position: relative;
     z-index: 10;
@@ -120,7 +115,7 @@ if (isset($designSystem) && is_array($designSystem)) {
                     <?php echo htmlspecialchars($category); ?>
                 </span>
                 <h1 class="main-article-title"><?php echo htmlspecialchars($title); ?></h1>
-                <p class="date" style="font-size: 13px; color: #999;">Publié le <?php echo $date; ?></p>
+                <p class="date" style="font-size: 13px; color: #999;">Publié le <?php echo htmlspecialchars($date); ?></p>
             </header>
 
             <div class="article-content">
@@ -137,7 +132,7 @@ if (isset($designSystem) && is_array($designSystem)) {
             </div>
             
             <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee;">
-                 <p><a href="index.php" style="text-decoration: none; color: white; font-weight: bold;">← Retour au Dashboard</a></p>
+                 <p><a href="<?php echo BASE_URL; ?>index.php" style="text-decoration: none; color: #000; font-weight: bold;">← Retour au Dashboard</a></p>
             </footer>
         </article>
     </main>

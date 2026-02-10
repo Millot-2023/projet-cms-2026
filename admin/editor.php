@@ -82,7 +82,8 @@ if (file_exists($data_path)) {
 
 $cover_path = "";
 if (!empty($cover)) {
-    $cover_path = (strpos($cover, 'data:image') === 0) ? $cover : $content_dir . $slug . '/' . $cover;
+    // Correction du chemin pour l'affichage dans l'éditeur
+    $cover_path = (strpos($cover, 'data:image') === 0) ? $cover : BASE_URL . 'content/' . $slug . '/' . $cover;
 }
 ?>
 <!DOCTYPE html>
@@ -305,7 +306,7 @@ if (!empty($cover)) {
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                coverData = e.target.result; // On stocke le Base64 temporairement pour l'envoi
+                coverData = e.target.result;
                 document.getElementById('preview-container').innerHTML = `<img src="${coverData}">`;
             };
             reader.readAsDataURL(file);
@@ -334,11 +335,7 @@ if (!empty($cover)) {
         .then(data => {
             if(data.status === "success") {
                 alert(data.message);
-                // CRUCIAL : On met à jour coverData avec le nom propre du fichier retourné par PHP
-                // pour éviter de renvoyer du Base64 inutilement au prochain clic.
-                if(data.fileName) {
-                    coverData = data.fileName;
-                }
+                if(data.fileName) { coverData = data.fileName; }
             } else {
                 alert("Erreur : " + data.message);
             }

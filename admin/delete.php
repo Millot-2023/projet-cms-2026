@@ -6,6 +6,7 @@
 
 require_once '../core/config.php';
 
+// Sécurité locale
 $is_local = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['SERVER_NAME'] === 'localhost');
 if (!$is_local) { exit; }
 
@@ -27,13 +28,13 @@ if (isset($_GET['project'])) {
 
         // DEPLACEMENT (RENAME)
         if (rename($source, $destination)) {
-            // CORRECTION : Retour au Cockpit (index.php)
-            header("Location: ../index.php?status=trashed");
+            // Utilisation de BASE_URL pour une redirection robuste
+            header("Location: " . BASE_URL . "index.php?status=trashed");
             exit;
         }
     }
 }
 
-// CORRECTION : Retour au Cockpit (index.php) en cas d'erreur
-header("Location: ../index.php?status=error");
+// Retour au Cockpit en cas d'erreur ou d'accès direct
+header("Location: " . BASE_URL . "index.php?status=error");
 exit;

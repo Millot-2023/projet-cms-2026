@@ -17,7 +17,7 @@ require_once 'includes/hero.php';
             
             <div class="grid-block">
                 <div class="card-image">
-                    <img src="assets/img/image-template.png" alt="Modèle de projet">
+                    <img src="<?php echo ASSETS_URL; ?>img/image-template.png" alt="Modèle de projet">
                 </div>
                 
                 <div class="card-content">
@@ -32,7 +32,7 @@ require_once 'includes/hero.php';
                     <p>Initialiser un nouvel article ou une nouvelle étude de cas dans le CMS.</p>
                     
                     <div class="card-footer" style="margin-top: auto;">
-                        <a href="admin/editor.php?project=nouveau-projet-<?php echo time(); ?>" class="btn-create" style="display: block; text-align: center; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: bold; border: 1px solid #444;">
+                        <a href="<?php echo BASE_URL; ?>admin/editor.php?project=nouveau-projet-<?php echo time(); ?>" class="btn-create" style="display: block; text-align: center; padding: 0.8rem; border-radius: 8px; text-decoration: none; font-weight: bold; border: 1px solid #444;">
                             CRÉER
                         </a>
                     </div>
@@ -68,9 +68,9 @@ require_once 'includes/hero.php';
                             $summary  = $data_loaded['summary'] ?? "";
                         }
 
-                        $image_src = "assets/img/image-template.png";
+                        $image_src = ASSETS_URL . "img/image-template.png";
                         if (!empty($cover)) {
-                            $image_src = (strpos($cover, 'data:image') === 0) ? $cover : $content_path . $folder . '/' . $cover;
+                            $image_src = (strpos($cover, 'data:image') === 0) ? $cover : BASE_URL . $content_path . $folder . '/' . $cover;
                         }
                         ?>
                         <article class="grid-block" style="position: relative;">
@@ -97,10 +97,10 @@ require_once 'includes/hero.php';
                                 
                                 <div class="card-footer" style="display: flex; align-items: center; gap: 10px; margin-top: auto;">
                                     <div style="display: flex; flex: 1; gap: 10px;">
-                                        <a href="admin/editor.php?project=<?php echo $folder; ?>" class="btn-open" style="flex: 1; text-align: center; border: 1px solid #555; padding: 0.6rem; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.75rem;">
+                                        <a href="<?php echo BASE_URL; ?>admin/editor.php?project=<?php echo $folder; ?>" class="btn-open" style="flex: 1; text-align: center; border: 1px solid #555; padding: 0.6rem; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.75rem;">
                                             ÉDITER
                                         </a>
-                                        <a href="article.php?slug=<?php echo $folder; ?>" class="btn-open" style="flex: 1; text-align: center; border: 1px solid #555; padding: 0.6rem; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.75rem;">
+                                        <a href="<?php echo BASE_URL; ?>article.php?slug=<?php echo $folder; ?>" class="btn-open" style="flex: 1; text-align: center; border: 1px solid #555; padding: 0.6rem; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.75rem;">
                                             LIRE
                                         </a>
                                     </div>
@@ -120,7 +120,7 @@ require_once 'includes/hero.php';
 function confirmDelete(slug) {
     const confirmation = confirm("ALERTE SÉCURITÉ - Christophe :\n\nConfirmer la suppression du dossier [" + slug + "] ?");
     if (confirmation) {
-        window.location.href = "admin/delete.php?project=" + slug;
+        window.location.href = "<?php echo BASE_URL; ?>admin/delete.php?project=" + slug;
     }
 }
 </script>

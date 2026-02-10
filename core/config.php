@@ -1,11 +1,23 @@
 <?php
 /**
- * CMS-2026 v2.0 - Configuration racine
+ * CMS-2026 v4.0 - Configuration racine (Version Robuste)
  * @author: Christophe Millot
  */
 
-define('SITE_NAME', 'CMS-2026 v2.0');
-define('BASE_URL', 'http://localhost/cms-2026-v2/');
+// 1. Protocole
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'];
+
+// 2. Calcul du dossier projet de manière absolue
+// On prend le chemin du dossier courant (/core), on remonte d'un cran (..) pour avoir la racine
+$script_path = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+// On nettoie pour ne garder que la base avant /admin ou /core
+$root_folder = preg_replace('#/(core|admin|includes).*$#i', '', $script_path);
+$root_folder = rtrim($root_folder, '/') . '/';
+
+// 3. Définition des constantes
+define('SITE_NAME', 'CMS-2026 v4.0');
+define('BASE_URL', $protocol . $host . $root_folder); 
 define('ASSETS_URL', BASE_URL . 'assets/');
 define('INC_PATH', __DIR__ . '/../includes/');
 
