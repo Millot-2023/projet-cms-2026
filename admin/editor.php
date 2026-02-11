@@ -219,8 +219,8 @@ if (!empty($cover)) {
             <button class="tool-btn" style="width: 100px;" onclick="resizePaper('375px')">MOBILE</button>
         </div>
 
-        <article class="paper" id="paper">
-            <div id="editor-core"></div>
+<article class="paper" id="paper">
+            <div id="editor-core"><?php echo $htmlContent; ?></div> 
         </article>
     </main>
 
@@ -238,7 +238,7 @@ if (!empty($cover)) {
     // =========================================================
     // 2. MOTEUR DE RENDU ET UI
     // =========================================================
-    function renderStyles() {
+function renderStyles() {
         var dynStyle = document.getElementById('dynamic-styles');
         if(!dynStyle) return;
         var css = ".paper { display: flow-root; padding-top: 40px !important; }\n"; 
@@ -246,7 +246,16 @@ if (!empty($cover)) {
             var isHeading = tag.startsWith('h');
             var marginBottom = isHeading ? '0.5em' : '1.5em'; 
             var marginTop = isHeading ? '1.2em' : '0em';
-            css += ".paper " + tag + ", #main-title { font-size: " + designSystem[tag].fontSize + "; line-height: 1.1 !important; margin-top: " + (tag === 'h1' ? '0' : marginTop) + " !important; margin-bottom: " + marginBottom + " !important; outline: none; display: block; }\n";
+            
+// On ajoute un sélecteur pour les blocs profonds et les colonnes
+css += ".paper " + tag + ", .paper .block-container " + tag + ", .paper .col-item, #main-title { " +
+       "font-size: " + designSystem[tag].fontSize + "; " +
+       "line-height: 1.1 !important; " + 
+       "margin-top: " + (tag === 'h1' ? '0' : marginTop) + " !important; " + 
+       "margin-bottom: " + marginBottom + " !important; " + 
+       "outline: none; " + 
+       "display: block; " +
+       "}\n";
         }
         dynStyle.innerHTML = css;
     }
