@@ -166,18 +166,18 @@ if (!empty($cover)) {
                 </button>
             </div>
 
-            <span class="section-label">ALIGNEMENT TEXTE</span>
-            <div class="row-align">
-                <button class="tool-btn" onclick="execStyle('justifyLeft')" title="Aligner à gauche">
-                    <div class="ico-ui ico-just-left"></div>
-                </button>
-                <button class="tool-btn" onclick="execStyle('justifyCenter')" title="Centrer">
-                    <div class="ico-ui ico-just-center"></div>
-                </button>
-                <button class="tool-btn" onclick="execStyle('justifyRight')" title="Aligner à droite">
-                    <div class="ico-ui ico-just-right"></div>
-                </button>
-            </div>
+<span class="section-label">ALIGNEMENT TEXTE</span>
+<div class="row-align">
+    <button class="tool-btn" onclick="execStyle('justifyLeft')" title="Aligner à gauche">
+        <div class="ico-txt-align ico-txt-left"></div>
+    </button>
+    <button class="tool-btn" onclick="execStyle('justifyCenter')" title="Centrer">
+        <div class="ico-txt-align ico-txt-center"></div>
+    </button>
+    <button class="tool-btn" onclick="execStyle('justifyRight')" title="Aligner à droite">
+        <div class="ico-txt-align ico-txt-right"></div>
+    </button>
+</div>
 
             <span class="section-label">COLONNES</span>
             <div class="row-cols" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px;">
