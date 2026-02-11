@@ -6,7 +6,12 @@
     grid-template-columns: minmax(20px, 1fr) minmax(auto, 1200px) minmax(20px, 1fr);
     column-gap: 0;
     width: 100%;
-    min-height: auto;
+    
+    // --- LA CORRECTION CLÉ ---
+    // On force la grille à occuper tout l'écran pour permettre au Hero de remonter
+    min-height: 100vh; 
+    background-color: #ffffff; // S'assure que le fond est opaque pour couvrir le hero
+    // -------------------------
 
     & > * {
         grid-column: 2;
@@ -20,7 +25,8 @@
 /* CIBLE DE L'ANCRE & CALAGE ÉDITORIAL */
 #main {
     scroll-margin-top: $header-height;
-    padding-top: 2rem;
+    padding-top: 4rem; // On augmente un peu l'espace pour l'esthétique
+    padding-bottom: 5rem; // On ajoute de l'espace en bas pour le confort de lecture
 
     & > :first-child {
         margin-top: 0 !important;

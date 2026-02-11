@@ -40,11 +40,46 @@ body.light-mode {
 
 // 4. ARCHITECTURE
 html, body { 
-    margin: 0; padding: 0; height: 100vh; overflow: hidden; 
+    margin: 0; padding: 0; height: 100vh;
+    
+    /*overflow: hidden; */
     font-family: 'Inter', sans-serif; 
     background-color: var(--canvas-bg); 
-    color: var(--accent); 
+    /*color: var(--accent); */
 }
+
+
+
+
+body:has(.master-grid) {
+    overflow-y: auto !important;
+    height: auto !important;
+}
+.master-grid {
+    width: 100%;
+    position: relative;
+}
+
+
+
+
+body:has(.master-grid) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    align-items: stretch;
+}
+
+.master-grid {
+    flex: 1; 
+    display: block; 
+}
+
+
+
+
+
+
 
 /* SIDEBAR - STRICT NOIR */
 .sidebar { 
@@ -64,7 +99,7 @@ html, body {
     body.sidebar-hidden & { transform: translateX(-340px); }
 
     &-header { 
-        padding: 40px 25px 25px; 
+        padding: 0px 25px 25px; /*hateur de la SIDEBAR*/
         border-bottom: 1px solid var(--sidebar-border); 
         display: flex; 
         align-items: center; 
@@ -173,7 +208,7 @@ input[type="range"] { width: 100%; accent-color: #fff; cursor: pointer; }
     width: 95%; /* Ajusté pour le centrage dynamique */
     max-width: 850px; 
     background: #ffffff; 
-    color: #000000; 
+    color: #000000 !important;
     min-height: 1100px; 
     height: auto; 
     padding: 60px; 

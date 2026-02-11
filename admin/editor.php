@@ -107,45 +107,6 @@ if (!empty($cover)) {
     <link rel="stylesheet" href="../assets/css/main.css">
 <style>
 
-    /* Base de l'icône */
-    .ico-align {
-        width: 20px;
-        height: 14px;
-        position: relative;
-        border-top: 2px solid #666; /* Ligne de texte */
-        border-bottom: 2px solid #666; /* Ligne de texte */
-    }
-    /* Le petit carré symbolisant l'image */
-    .ico-align::before {
-        content: "";
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: #fff;
-        top: 3px;
-    }
-    /* Positionnement du carré */
-    .ico-left::before  { left: 0; }
-    .ico-right::before { right: 0; }
-    /* Cas particulier : Pleine largeur (on remplace le carré par une ligne centrale) */
-    .ico-full::before {
-        width: 20px;
-        height: 2px;
-        background: #666;
-        top: 5px;
-        left: 0;
-    }
-    /* Ligne centrale pour gauche et droite */
-    .ico-left::after, .ico-right::after {
-        content: "";
-        position: absolute;
-        width: 10px;
-        height: 2px;
-        background: #666;
-        top: 6px;
-    }
-    .ico-left::after  { right: 0; }
-    .ico-right::after { left: 0; }
 
 </style>
 
