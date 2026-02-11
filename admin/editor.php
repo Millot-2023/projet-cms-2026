@@ -179,37 +179,20 @@ if (!empty($cover)) {
                 </button>
             </div>
 
-<span class="section-label">COLONNES</span>
-<div class="row-cols" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px;">
-    <button class="tool-btn" onclick="addGridBlock(2)">2 COLONNES</button>
-    <button class="tool-btn" onclick="addGridBlock(3)">3 COLONNES</button>
-</div>
+            <span class="section-label">COLONNES</span>
+            <div class="row-cols" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px;">
+                <button class="tool-btn" onclick="addGridBlock(2)">2 COLONNES</button>
+                <button class="tool-btn" onclick="addGridBlock(3)">3 COLONNES</button>
+            </div>
 
-
-
-
-
-
-
-
-
-<div onclick="toggleLettrine()" style="width: 100%; margin-bottom: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 10px; cursor: pointer; padding: 5px 0;">
-    <span id="v-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1px solid #ccc; border-radius: 3px; font-weight: bold; font-size: 11px; color: transparent; transition: all 0.2s;">
-        V
-    </span> 
-    <span style="color: #bbb; font-size: 9px; letter-spacing: 0.8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 500; text-transform: uppercase;">
-        Lettrine
-    </span>
-</div>
-
-
-
-
-
-
-
-
-
+            <div onclick="toggleLettrine()" style="width: 100%; margin-bottom: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 10px; cursor: pointer; padding: 5px 0;">
+                <span id="v-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1px solid #ccc; border-radius: 3px; font-weight: bold; font-size: 11px; color: transparent; transition: all 0.2s;">
+                    V
+                </span> 
+                <span style="color: #bbb; font-size: 9px; letter-spacing: 0.8px; font-family: 'Inter', sans-serif; font-weight: 500; text-transform: uppercase;">
+                    Lettrine
+                </span>
+            </div>
 
             <div class="gauge-row">
                 <div class="gauge-info"><span>ESPACEMENT (GUTTER)</span><span id="val-gutter">20</span>px</div>
@@ -229,18 +212,15 @@ if (!empty($cover)) {
         </div>
     </aside>
 
-    <main class="canvas">
+<main class="canvas">
         <div class="responsive-switcher">
             <button class="tool-btn" style="width: 100px;" onclick="resizePaper('100%')">DESKTOP</button>
             <button class="tool-btn" style="width: 100px;" onclick="resizePaper('768px')">TABLETTE</button>
             <button class="tool-btn" style="width: 100px;" onclick="resizePaper('375px')">MOBILE</button>
         </div>
+
         <article class="paper" id="paper">
-            <div class="block-container">
-                <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
-                <h1 id="main-title" contenteditable="true" onfocus="setTarget('h1')"><?php echo htmlspecialchars($title); ?></h1>
-            </div>
-            <div id="editor-core"><?php echo $htmlContent; ?></div>
+            <div id="editor-core"></div>
         </article>
     </main>
 
@@ -251,8 +231,9 @@ if (!empty($cover)) {
     var coverData = "<?php echo $cover; ?>"; 
     var currentTag = 'h1';
     var currentImageElement = null;
+    var currentTargetElement = null;
     var designSystem = <?php echo json_encode($designSystemArray); ?>;
-    var LOREM_TEXT = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+   var LOREM_TEXT = "Le design system n'est pas seulement une collection de composants, c'est l'ossature de votre projet web. En utilisant des blocs structurés, vous assurez une cohérence visuelle sur tous les écrans, du mobile au desktop. Ce texte permet de tester la lisibilité, l'espacement des lignes et l'impact des lettrines sur vos paragraphes. Un bon éditeur doit permettre de manipuler ces éléments avec fluidité pour obtenir un rendu professionnel et équilibré à chaque publication.";
 
     // =========================================================
     // 2. MOTEUR DE RENDU ET UI
@@ -284,33 +265,31 @@ if (!empty($cover)) {
     // =========================================================
     // 3. GESTION DES CIBLES ET STYLES DYNAMIQUES
     // =========================================================
-function setTarget(tag, imgEl) {
-    currentTag = tag;
-    currentImageElement = imgEl || null;
-    var label = document.getElementById('target-label');
-    if(label) label.innerText = tag.toUpperCase();
+    function setTarget(tag, el) {
+        currentTag = tag;
+        currentImageElement = null;
+        currentTargetElement = null;
 
-    if(designSystem[tag]) {
-        var val = parseInt(designSystem[tag].fontSize);
-        var slider = document.getElementById('slider-size');
-        var display = document.getElementById('val-size');
-        if(slider) slider.value = val;
-        if(display) display.innerText = val;
+        if (tag === 'grid' || tag === 'img') {
+            currentImageElement = el; 
+            currentTargetElement = el.querySelector('p') || el.querySelector('.col-item');
+        } else {
+            if (el && el.getAttribute('contenteditable') === 'true') {
+                currentTargetElement = el;
+            }
+        }
+
+        var label = document.getElementById('target-label');
+        if(label) label.innerText = tag.toUpperCase();
+
+        if(designSystem[tag]) {
+            var val = parseInt(designSystem[tag].fontSize);
+            document.getElementById('slider-size').value = val;
+            document.getElementById('val-size').innerText = val;
+        }
+
+        updateLettrineIcon(currentTargetElement);
     }
-
-    // --- AJOUT POUR LA SYNCHRO DE LA LETTRINE ---
-    // On définit quelle est la cible textuelle pour vérifier la classe CSS
-    let targetForLettrine = imgEl ? (imgEl.querySelector('p') || imgEl.querySelector('.col-item')) : document.activeElement;
-    
-    // On appelle la fonction de mise à jour visuelle du "V"
-    updateLettrineIcon(targetForLettrine);
-    // --------------------------------------------
-}
-
-
-
-
-
 
     function updateStyle(prop, val, displayId) {
         if(designSystem[currentTag]) {
@@ -324,21 +303,20 @@ function setTarget(tag, imgEl) {
     function updateImageWidth(val) {
         if(currentImageElement) {
             currentImageElement.style.width = val + '%';
-            var display = document.getElementById('val-img-width');
-            if(display) display.innerText = val;
+            document.getElementById('val-img-width').innerText = val;
         }
     }
 
-    // =========================================================
-    // 4. INSERTION DE BLOCS (TEXTE, FLOAT, IMAGE)
+// =========================================================
+    // 4. INSERTION DE BLOCS (VERSION SÉCURISÉE)
     // =========================================================
     function addBlock(tag, txt) {
         txt = txt || LOREM_TEXT;
         var container = document.createElement('div');
         container.className = 'block-container';
-        container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div><' + tag + ' contenteditable="true" onfocus="setTarget(\'' + tag + '\')">' + txt + '</' + tag + '>';
-        var core = document.getElementById('editor-core');
-        if(core) core.appendChild(container);
+        // Concaténation classique pour forcer l'affichage du texte
+        container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div><' + tag + ' contenteditable="true" onfocus="setTarget(\'' + tag + '\', this)">' + txt + '</' + tag + '>';
+        document.getElementById('editor-core').appendChild(container);
     }
 
     function addFloatBlock(type) {
@@ -346,15 +324,15 @@ function setTarget(tag, imgEl) {
         container.className = 'block-container';
         var width = (type === 'full') ? "100%" : "40%";
         var style = (type === 'left') ? "float:left; margin:0 20px 10px 0; width:" + width + ";" : (type === 'right') ? "float:right; margin:0 0 10px 20px; width:" + width + ";" : "width:" + width + "; margin-bottom:20px; clear:both;";
-        container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div><div class="image-placeholder" onclick="setTarget(\'img\', this); event.stopPropagation();" ondblclick="triggerUpload(this)" style="' + style + ' background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">IMAGE <input type="file" style="display:none;" onchange="handleImageSelect(this)"></div><p contenteditable="true" onfocus="setTarget(\'p\')">' + LOREM_TEXT + '</p>';
-        var core = document.getElementById('editor-core');
-        if(core) core.appendChild(container);
+        
+        container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div>' +
+            '<div class="image-placeholder" onclick="setTarget(\'img\', this); event.stopPropagation();" ondblclick="triggerUpload(this)" style="' + style + ' background:#eee; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">IMAGE <input type="file" style="display:none;" onchange="handleImageSelect(this)"></div>' +
+            '<p contenteditable="true" onfocus="setTarget(\'p\', this)">' + LOREM_TEXT + '</p>';
+            
+        document.getElementById('editor-core').appendChild(container);
     }
 
-    function triggerUpload(el) { 
-        var inp = el.querySelector('input');
-        if(inp) inp.click(); 
-    }
+    function triggerUpload(el) { el.querySelector('input').click(); }
 
     function handleImageSelect(input) {
         var file = input.files[0];
@@ -362,6 +340,7 @@ function setTarget(tag, imgEl) {
             var reader = new FileReader();
             reader.onload = function(e) {
                 var placeholder = input.parentElement;
+                // Ici aussi, on utilise la concaténation simple
                 placeholder.innerHTML = '<img src="' + e.target.result + '" style="width:100%; height:100%; object-fit:cover;"><input type="file" style="display:none;" onchange="handleImageSelect(this)">';
                 var img = placeholder.querySelector('img');
                 img.onclick = function(ev) { ev.stopPropagation(); setTarget('img', placeholder); };
@@ -375,66 +354,53 @@ function setTarget(tag, imgEl) {
     function handleCoverChange(input) {
         var file = input.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
+            var reader = new FileReader();
+            reader.onload = function(e) {
                 coverData = e.target.result;
-                document.getElementById('preview-container').innerHTML = `<img src="${coverData}">`;
+                document.getElementById('preview-container').innerHTML = '<img src="' + coverData + '">';
             };
             reader.readAsDataURL(file);
         }
     }
 
-    // =========================================================
+// =========================================================
     // 5. FONCTIONS DE SAUVEGARDE ET EXPORT
     // =========================================================
     function publishProject() {
-        try {
-            var elSlug = document.getElementById('inp-slug');
-            var elTitle = document.getElementById('main-title');
-            var elSummary = document.getElementById('inp-summary');
-            var elCore = document.getElementById('editor-core');
+        var formData = new FormData();
+        
+        // SECURITÉ : On récupère le titre s'il existe, sinon le slug
+        var titleEl = document.getElementById('main-title');
+        var safeTitle = titleEl ? titleEl.innerText : document.getElementById('inp-slug').value;
 
-            var formData = new FormData();
-            formData.append('slug', elSlug ? elSlug.value : "");
-            formData.append('title', elTitle ? elTitle.innerText : "Sans titre");
-            formData.append('summary', elSummary ? elSummary.value : "");
-            formData.append('htmlContent', elCore ? elCore.innerHTML : "");
-            formData.append('coverImage', coverData);
-            formData.append('designSystem', JSON.stringify(designSystem));
+        formData.append('slug', document.getElementById('inp-slug').value);
+        formData.append('title', safeTitle);
+        formData.append('summary', document.getElementById('inp-summary').value);
+        formData.append('htmlContent', document.getElementById('editor-core').innerHTML);
+        formData.append('coverImage', coverData);
+        formData.append('designSystem', JSON.stringify(designSystem));
 
-            fetch('save.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === "success") {
-                    alert(data.message);
-                } else {
-                    alert("Erreur : " + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("ERREUR RÉSEAU");
-            });
-        } catch (e) {
-            console.error(e);
-        }
+        fetch('save.php', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(data => { alert(data.message); })
+        .catch(error => { alert("ERREUR RÉSEAU"); });
     }
 
     function exportForGmail() {
-        var elTitle = document.getElementById('main-title');
         var elCore = document.getElementById('editor-core');
-        if(!elCore) return;
-        var titleText = elTitle ? elTitle.innerText : "Projet";
         var temp = document.createElement('div');
         temp.innerHTML = elCore.innerHTML;
-        temp.querySelectorAll('.delete-block, input').forEach(function(x) { x.remove(); });
-        var emailTemplate = '<div style="padding:40px; font-family:Arial; max-width:800px; margin:auto;"><h1>' + titleText + '</h1>' + temp.innerHTML + '</div>';
+        temp.querySelectorAll('.delete-block, input').forEach(x => x.remove());
+
+        // SECURITÉ : Idem ici pour l'export
+        var titleEl = document.getElementById('main-title');
+        var safeTitle = titleEl ? titleEl.innerText : document.getElementById('inp-slug').value;
+
+        var emailTemplate = '<div style="padding:40px; font-family:Arial; max-width:800px; margin:auto;"><h1>' + safeTitle + '</h1>' + temp.innerHTML + '</div>';
+        
         var blob = new Blob([emailTemplate], { type: 'text/html' });
         var data = [new ClipboardItem({ 'text/html': blob })];
-        navigator.clipboard.write(data).then(function() { alert("COPIÉ POUR GMAIL !"); });
+        navigator.clipboard.write(data).then(() => { alert("COPIÉ POUR GMAIL !"); });
     }
 
     function execStyle(cmd) { document.execCommand(cmd, false, null); }
@@ -443,22 +409,18 @@ function setTarget(tag, imgEl) {
     window.onload = function() { renderStyles(); };
 
     // =========================================================
-    // 6. GESTION DES COLONNES (GRID SYSTEM)
+    // 6. GESTION DES COLONNES
     // =========================================================
     function addGridBlock(num) {
         var container = document.createElement('div');
         container.className = 'block-container';
         var colsHtml = '';
         for(var i=0; i < num; i++) {
-            colsHtml += '<div class="col-item" contenteditable="true" onfocus="setTarget(\'grid\', this.parentElement)" style="flex:1; min-height:100px; outline:none; border:0px dashed #ddd; padding:0px;">' + LOREM_TEXT + '</div>';
+            // Utilisation de la concaténation simple pour le LOREM qui est SACRÉ
+            colsHtml += '<div class="col-item" contenteditable="true" onfocus="setTarget(\'grid\', this.parentElement)" style="flex:1; min-height:100px; outline:none; padding:0px;">' + LOREM_TEXT + '</div>';
         }
-        container.innerHTML = `
-            <div class="delete-block" onclick="this.parentElement.remove()">✕</div>
-            <div class="grid-wrapper" onclick="setTarget('grid', this)" style="display:flex; gap:20px; margin-bottom:20px; width:100%; clear:both;">
-                ${colsHtml}
-            </div>`;
-        var core = document.getElementById('editor-core');
-        if(core) core.appendChild(container);
+        container.innerHTML = '<div class="delete-block" onclick="this.parentElement.remove()">✕</div><div class="grid-wrapper" onclick="setTarget(\'grid\', this)" style="display:flex; gap:20px; margin-bottom:20px; width:100%; clear:both;">' + colsHtml + '</div>';
+        document.getElementById('editor-core').appendChild(container);
     }
 
     function updateGutter(val) {
@@ -468,45 +430,31 @@ function setTarget(tag, imgEl) {
         }
     }
 
-
     // =========================================================
     // 7. LETTRINES
     // =========================================================
-
-// Fonction pour mettre à jour l'aspect visuel du carré V
-function updateLettrineIcon(target) {
-    let icon = document.getElementById('v-icon');
-    if (!icon) return;
-
-    if (target && target.classList.contains('has-lettrine')) {
-        icon.style.backgroundColor = "#28a745"; 
-        icon.style.borderColor = "#28a745";
-        icon.style.color = "#fff";
-    } else {
-        icon.style.backgroundColor = "transparent";
-        icon.style.borderColor = "#fff";
-        icon.style.color = "transparent";
-    }
-}
-
-// Ta fonction de clic sur le bouton
-function toggleLettrine() {
-    let target;
-    if (currentImageElement) {
-        target = currentImageElement.querySelector('p') || currentImageElement.querySelector('.col-item');
-    } else {
-        let activeEl = document.activeElement;
-        if (activeEl && activeEl.getAttribute('contenteditable') === 'true') {
-            target = activeEl;
+    function updateLettrineIcon(target) {
+        let icon = document.getElementById('v-icon');
+        if (!icon) return;
+        if (target && target.classList.contains('has-lettrine')) {
+            icon.style.backgroundColor = "#28a745"; 
+            icon.style.borderColor = "#28a745";
+            icon.style.color = "#fff";
+        } else {
+            icon.style.backgroundColor = "transparent";
+            icon.style.borderColor = "#fff";
+            icon.style.color = "transparent";
         }
     }
 
-    if (target) {
-        target.classList.toggle('has-lettrine');
-        updateLettrineIcon(target); // On met à jour l'icône après le clic
+    function toggleLettrine() {
+        if (currentTargetElement) {
+            currentTargetElement.classList.toggle('has-lettrine');
+            updateLettrineIcon(currentTargetElement);
+        } else {
+            alert("Cliquez d'abord dans un texte.");
+        }
     }
-}
-
     </script>
 </body>
 </html>
