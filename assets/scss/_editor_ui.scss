@@ -436,8 +436,28 @@ input[type="range"] { width: 100%; accent-color: #fff; cursor: pointer; }
 
 
 
+/*LETRINES*/
+/* Le style de ta lettrine tel que sur ton image */
+/* LETTRINES */
+.has-lettrine {
+    // Sécurité : On force la suppression de bordure sur le paragraphe lui-même
+    border: none !important;
+    outline: none !important;
+    text-decoration: none !important;
 
-
+    &::first-letter {
+        float: left;
+        background-color: #ffffff; 
+        color: #000000;            
+        font-size: 3.5rem;         
+        line-height: 1;            
+        padding: 4px 10px;         
+        margin-right: 12px;        
+        margin-top: 4px;           
+        font-weight: 900;          
+        display: block;            
+    }
+}
 
 
 

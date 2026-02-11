@@ -179,11 +179,37 @@ if (!empty($cover)) {
                 </button>
             </div>
 
-            <span class="section-label">COLONNES</span>
-            <div class="row-cols" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
-                <button class="tool-btn" onclick="addGridBlock(2)">2 COLONNES</button>
-                <button class="tool-btn" onclick="addGridBlock(3)">3 COLONNES</button>
-            </div>
+<span class="section-label">COLONNES</span>
+<div class="row-cols" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px;">
+    <button class="tool-btn" onclick="addGridBlock(2)">2 COLONNES</button>
+    <button class="tool-btn" onclick="addGridBlock(3)">3 COLONNES</button>
+</div>
+
+
+
+
+
+
+
+
+
+<div onclick="toggleLettrine()" style="width: 100%; margin-bottom: 12px; display: flex; align-items: center; justify-content: flex-start; gap: 10px; cursor: pointer; padding: 5px 0;">
+    <span id="v-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1px solid #ccc; border-radius: 3px; font-weight: bold; font-size: 11px; color: transparent; transition: all 0.2s;">
+        V
+    </span> 
+    <span style="color: #bbb; font-size: 9px; letter-spacing: 0.8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 500; text-transform: uppercase;">
+        Lettrine
+    </span>
+</div>
+
+
+
+
+
+
+
+
+
 
             <div class="gauge-row">
                 <div class="gauge-info"><span>ESPACEMENT (GUTTER)</span><span id="val-gutter">20</span>px</div>
@@ -258,19 +284,33 @@ if (!empty($cover)) {
     // =========================================================
     // 3. GESTION DES CIBLES ET STYLES DYNAMIQUES
     // =========================================================
-    function setTarget(tag, imgEl) {
-        currentTag = tag;
-        currentImageElement = imgEl || null;
-        var label = document.getElementById('target-label');
-        if(label) label.innerText = tag.toUpperCase();
-        if(designSystem[tag]) {
-            var val = parseInt(designSystem[tag].fontSize);
-            var slider = document.getElementById('slider-size');
-            var display = document.getElementById('val-size');
-            if(slider) slider.value = val;
-            if(display) display.innerText = val;
-        }
+function setTarget(tag, imgEl) {
+    currentTag = tag;
+    currentImageElement = imgEl || null;
+    var label = document.getElementById('target-label');
+    if(label) label.innerText = tag.toUpperCase();
+
+    if(designSystem[tag]) {
+        var val = parseInt(designSystem[tag].fontSize);
+        var slider = document.getElementById('slider-size');
+        var display = document.getElementById('val-size');
+        if(slider) slider.value = val;
+        if(display) display.innerText = val;
     }
+
+    // --- AJOUT POUR LA SYNCHRO DE LA LETTRINE ---
+    // On définit quelle est la cible textuelle pour vérifier la classe CSS
+    let targetForLettrine = imgEl ? (imgEl.querySelector('p') || imgEl.querySelector('.col-item')) : document.activeElement;
+    
+    // On appelle la fonction de mise à jour visuelle du "V"
+    updateLettrineIcon(targetForLettrine);
+    // --------------------------------------------
+}
+
+
+
+
+
 
     function updateStyle(prop, val, displayId) {
         if(designSystem[currentTag]) {
@@ -427,6 +467,46 @@ if (!empty($cover)) {
             document.getElementById('val-gutter').innerText = val;
         }
     }
+
+
+    // =========================================================
+    // 7. LETTRINES
+    // =========================================================
+
+// Fonction pour mettre à jour l'aspect visuel du carré V
+function updateLettrineIcon(target) {
+    let icon = document.getElementById('v-icon');
+    if (!icon) return;
+
+    if (target && target.classList.contains('has-lettrine')) {
+        icon.style.backgroundColor = "#28a745"; 
+        icon.style.borderColor = "#28a745";
+        icon.style.color = "#fff";
+    } else {
+        icon.style.backgroundColor = "transparent";
+        icon.style.borderColor = "#fff";
+        icon.style.color = "transparent";
+    }
+}
+
+// Ta fonction de clic sur le bouton
+function toggleLettrine() {
+    let target;
+    if (currentImageElement) {
+        target = currentImageElement.querySelector('p') || currentImageElement.querySelector('.col-item');
+    } else {
+        let activeEl = document.activeElement;
+        if (activeEl && activeEl.getAttribute('contenteditable') === 'true') {
+            target = activeEl;
+        }
+    }
+
+    if (target) {
+        target.classList.toggle('has-lettrine');
+        updateLettrineIcon(target); // On met à jour l'icône après le clic
+    }
+}
+
     </script>
 </body>
 </html>
