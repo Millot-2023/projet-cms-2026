@@ -330,6 +330,88 @@ function addFloatBlock(type) {
 
 
 
+function updateImage(imgElement) {
+    const newSrc = prompt("Entrez l'URL de la nouvelle image :", imgElement.src);
+    
+    if (newSrc) {
+        console.log("Nouvelle URL reçue :", newSrc); // TEST 1
+        
+        imgElement.src = newSrc;
+        
+        if (typeof updateSidebarCardImage === "function") {
+            updateSidebarCardImage(imgElement);
+            console.log("Sidebar mise à jour"); // TEST 2
+        }
+
+        console.log("Tentative de sauvegarde..."); // TEST 3
+        saveContent(); 
+    }
+}
+
+
+
+
+function updateSidebarCardImage(imgElement) {
+    // 1. On trouve le bloc parent dans l'éditeur
+    const container = imgElement.closest('.block-container');
+    
+    // 2. On calcule sa position (index) parmi tous les blocs
+    const allBlocks = Array.from(document.querySelectorAll('#paper .block-container'));
+    const index = allBlocks.indexOf(container);
+    
+    // 3. On cible l'image dans la sidebar avec ton nouveau HTML (.card-image img)
+    const sidebarImages = document.querySelectorAll('.sidebar .card-image img');
+    const targetImg = sidebarImages[index];
+
+    if (targetImg) {
+        // 4. On synchronise la source
+        targetImg.src = imgElement.src;
+    }
+}
+
+
+
+
+
+
+
+function saveContent() {
+    const blocks = [];
+    
+    document.querySelectorAll('#paper .block-container').forEach(container => {
+        // On cherche l'image soit directement, soit dans le placeholder
+        const img = container.querySelector('img');
+        const textElement = container.querySelector('p');
+
+        blocks.push({
+            // On sauve le src de l'image trouvée, sinon le template par défaut
+            image: img ? img.getAttribute('src') : "assets/img/image-template.png",
+            content: textElement ? textElement.innerHTML : ""
+        });
+    });
+
+    console.log("Données envoyées :", blocks);
+
+    fetch('save.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(blocks)
+    })
+    .then(response => response.json())
+    .then(data => console.log("Sauvegarde réussie :", data))
+    .catch(err => console.error("Erreur :", err));
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -439,14 +521,20 @@ function handleCoverChange(input) {
         reader.onload = function(e) {
             var imageData = e.target.result;
             
-            // Si on vient d'un double-clic dans un bloc Float
             if (currentTag === 'img' && currentImageElement) {
+                // On insère l'image dans le placeholder
                 currentImageElement.innerHTML = '<img src="' + imageData + '" style="width:100%; height:100%; object-fit:cover;">';
-                // On remet le tag à null pour ne pas polluer le prochain clic sidebar
+                
+                // --- SYNCHRO SIDEBAR ---
+                // On passe l'élément <img> qu'on vient de créer à la synchro
+                updateSidebarCardImage(currentImageElement.querySelector('img'));
+                
+                // --- SAUVEGARDE ---
+                saveContent(); 
+                
                 currentTag = null; 
             } 
             else {
-                // Sinon, c'est l'appel direct de la Sidebar pour la Card
                 coverData = imageData;
                 var preview = document.getElementById('preview-container');
                 if(preview) {

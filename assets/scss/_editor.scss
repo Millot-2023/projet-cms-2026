@@ -1,12 +1,10 @@
 @use "variables" as *;
 
-// 1. LOCAL VARIABLES (SIDEBAR)
 :root {
     --sidebar-bg: #111;
     --text-muted: #888;
 }
 
-// 2. LAYOUT PRINCIPAL
 .sidebar {
     position: fixed;
     top: 0; left: 0; bottom: 0;
@@ -20,19 +18,41 @@
         font-size: 14px;
         text-transform: uppercase;
         color: #fff;
-        font-weight: 300; // Remplacement de $weight-light par 300
+        font-weight: 300;
     }
 }
 
-
-
-// TEST DE SURVIE DES JAUGES
 .gauges {
     display: block !important;
-    background: red !important; // Si tu vois du rouge, c'est que la classe est reconnue
+    background: red !important;
     
     .gauge-row {
         display: flex !important;
         border: 1px solid yellow !important;
     }
 }
+
+// --- CORRECTION RESPONSIVE UNIVERSELLE ---
+
+#paper {
+    container-type: inline-size;
+}
+
+@container (max-width: 500px) {
+    .block-container {
+        display: block !important;
+
+        .image-placeholder {
+            float: none !important;
+            width: 100% !important;
+            margin: 0 0 15px 0 !important;
+            display: block !important;
+        }
+
+        p {
+            clear: both !important;
+            width: 100% !important;
+            display: block !important;
+        }
+    } // Fin de .block-container
+} // Fin de @container

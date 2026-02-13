@@ -1,0 +1,90 @@
+@use "variables" as *;
+
+// 1. LOCAL VARIABLES (SIDEBAR)
+:root {
+    --sidebar-bg: #111;
+    --text-muted: #888;
+}
+
+// 2. LAYOUT PRINCIPAL
+.sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 320px;
+    background: var(--sidebar-bg);
+    padding: 30px 20px;
+    border-right: 1px solid #333;
+    z-index: 100;
+
+    h2 {
+        font-size: 14px;
+        text-transform: uppercase;
+        color: #fff;
+        font-weight: 300; // Remplacement de $weight-light par 300
+    }
+}
+
+
+
+// TEST DE SURVIE DES JAUGES
+.gauges {
+    display: block !important;
+    background: red !important; // Si tu vois du rouge, c'est que la classe est reconnue
+    
+    .gauge-row {
+        display: flex !important;
+        border: 1px solid yellow !important;
+    }
+}
+
+
+
+
+/* Passage des blocs float en empilement sur mobile */
+/* Force le mode empilé sur mobile */
+/*
+
+@media (max-width: 768px) {
+    #editor-core .block-container {
+        .image-placeholder[style] { // Le [style] cible les attributs injectés par le JS
+            float: none !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-bottom: 15px !important;
+        }
+        
+        p {
+            display: block !important;
+            width: 100% !important;
+            clear: both !important;
+        }
+    }
+}
+*/
+
+/* 1. Pour le vrai responsive (quand on réduit Chrome) */
+@media (max-width: 768px) {
+    .block-container {
+        display: block !important;
+        .image-placeholder {
+            float: none !important;
+            width: 100% !important;
+            margin: 0 0 15px 0 !important;
+        }
+        p { clear: both !important; }
+    }
+}
+
+/* 2. Pour le bouton "Mobile" du Paper */
+/* On cible le bloc quand il est dans le mode mobile du CMS */
+.paper.is-mobile .block-container, 
+.is-mobile .block-container {
+    display: block !important;
+    .image-placeholder {
+        float: none !important;
+        width: 100% !important;
+        margin: 0 0 15px 0 !important;
+    }
+    p { clear: both !important; }
+}

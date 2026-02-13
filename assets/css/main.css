@@ -153,6 +153,26 @@ p {
   border: 1px solid yellow !important;
 }
 
+#paper {
+  container-type: inline-size;
+}
+
+@container (max-width: 500px) {
+  .block-container {
+    display: block !important;
+  }
+  .block-container .image-placeholder {
+    float: none !important;
+    width: 100% !important;
+    margin: 0 0 15px 0 !important;
+    display: block !important;
+  }
+  .block-container p {
+    clear: both !important;
+    width: 100% !important;
+    display: block !important;
+  }
+}
 /* ==========================================================================
    MAIN.SCSS - ARCHITECTURE PROJET-CMS-2026
    ========================================================================== */
@@ -781,6 +801,26 @@ body.sidebar-hidden .sidebar-trigger {
   left: 15px !important;
 }
 
+/* Passage des blocs float en empilement sur mobile */
+/* Force le mode empilé sur mobile */
+/*
+@media (max-width: 768px) {
+    #editor-core .block-container {
+        .image-placeholder[style] { // Le [style] cible les attributs injectés par le JS
+            float: none !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-bottom: 15px !important;
+        }
+
+        p {
+            display: block !important;
+            width: 100% !important;
+            clear: both !important;
+        }
+    }
+}*/
 /* 1. Base du papier */
 .paper {
   width: 95%;

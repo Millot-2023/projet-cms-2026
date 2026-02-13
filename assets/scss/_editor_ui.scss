@@ -536,3 +536,29 @@ input[type="range"] { width: 100%; accent-color: #fff; cursor: pointer; }
 
     body.sidebar-hidden & { left: 15px !important; }
 }
+
+
+
+
+/* Passage des blocs float en empilement sur mobile */
+/* Force le mode empilé sur mobile */
+
+
+/*
+@media (max-width: 768px) {
+    #editor-core .block-container {
+        .image-placeholder[style] { // Le [style] cible les attributs injectés par le JS
+            float: none !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-bottom: 15px !important;
+        }
+        
+        p {
+            display: block !important;
+            width: 100% !important;
+            clear: both !important;
+        }
+    }
+}*/
