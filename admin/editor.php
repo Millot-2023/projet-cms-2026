@@ -158,6 +158,16 @@ if (!empty($cover)) {
             <input type="text" id="inp-date" class="admin-input" value="<?php echo htmlspecialchars($date); ?>" readonly>
             <textarea id="inp-summary" class="admin-input" placeholder="Résumé" style="height:60px;"><?php echo htmlspecialchars($summary); ?></textarea>
 
+
+<div class="sidebar-group">
+    <span class="section-label">Google Fonts</span>
+    <input type="text" name="google_font" id="google_font_field" 
+           value="<?php echo $data_loaded['google_font'] ?? ''; ?>" 
+           placeholder="Nom de la Google Font">
+</div>
+
+
+
             <span class="section-label">TYPOGRAPHIE</span>
             <div class="row-h">
                 <button class="tool-btn" onclick="addBlock('h1', 'Titre H1')">H1</button>
@@ -175,6 +185,50 @@ if (!empty($cover)) {
                     <input type="color" oninput="changeTextColor(this.value)" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
                 </div>
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--Hyperliens-->
+                <span class="section-label">HYPERLIEN</span>
+<div class="cockpit-group">
+<button type="button" onclick="addLinkToSelection()" class="tool-btn">
+    🔗 Créer
+</button>
+
+<button type="button" onclick="removeLinkFromSelection()" class="tool-btn-hyperliens">
+    🔗 Enlever
+</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!--
+<div class="sidebar-group">
+    <span class="section-label">Hyperlien</span>
+    <input type="text" name="google_font" id="google_font_field" 
+           value="<?php echo $data_loaded['google_font'] ?? ''; ?>" 
+           placeholder="Nom de la Google Font">
+</div>-->
+
 
             <span class="section-label">RÉGLAGES : <span id="target-label" style="color:#fff">H1</span></span>
             <div class="gauge-row">
@@ -564,19 +618,90 @@ function publishProject() {
     .then(d => alert("Projet publié et résumé enregistré !"));
 }
 
-
-
-
-
-
-
     window.onload = renderStyles;
 
 
 
 
+/*GOOGLE-FONTS*/
 
 
+
+// On cible le champ et le paper
+
+const fontInput = document.getElementById('google_font_field');
+const paperElement = document.getElementById('paper');
+
+if (fontInput && paperElement) {
+    fontInput.addEventListener('input', function() {
+        const fontName = this.value.trim();
+        
+        if (fontName.length > 2) {
+            // ACTION : Charger et appliquer la police Google
+            let link = document.getElementById('google-live-link');
+            if (!link) {
+                link = document.createElement('link');
+                link.id = 'google-live-link';
+                link.rel = 'stylesheet';
+                document.head.appendChild(link);
+            }
+            const urlName = fontName.split(' ').join('+');
+            link.href = "https://fonts.googleapis.com/css2?family=" + urlName + "&display=swap";
+
+            paperElement.style.fontFamily = "'" + fontName + "', sans-serif";
+        } 
+        else if (fontName.length === 0) {
+            // ACTION : Le champ est vide, on remet la police par défaut (Inter ou sans-serif)
+            paperElement.style.fontFamily = "Inter, sans-serif";
+            
+            // Optionnel : on enlève le lien Google pour nettoyer le head
+            const link = document.getElementById('google-live-link');
+            if (link) link.remove();
+        }
+    });
+}
+
+
+
+
+/*Hyperliens*/
+function addLinkToSelection() {
+    const url = prompt("Entrez l'adresse du lien (ex: https://google.fr) :");
+
+    if (url !== null && url !== "") {
+        // 1. On crée le lien
+        document.execCommand('createLink', false, url);
+
+        // 2. PETITE ASTUCE : On force le navigateur à recalculer le style 
+        // de la sélection pour que le bleu apparaisse tout de suite.
+        const selection = window.getSelection().anchorNode.parentElement;
+        if (selection && selection.tagName === 'A') {
+            selection.style.color = '#007bff';
+            selection.style.textDecoration = 'underline';
+        }
+    }
+}
+
+function removeLinkFromSelection() {
+    // 1. On récupère l'élément sur lequel on a cliqué ou sélectionné
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+
+    // 2. On cherche le parent "<a>" le plus proche
+    let container = selection.anchorNode;
+    if (container.nodeType === 3) container = container.parentNode; // Si c'est du texte, on remonte au parent
+
+    const link = container.closest('a');
+
+    // 3. Si on a trouvé un lien, on l'enlève
+    if (link) {
+        // On remplace le lien par son propre contenu texte
+        link.replaceWith(...link.childNodes);
+    } else {
+        // Fallback au cas où le closest n'a rien trouvé
+        document.execCommand('unlink', false, null);
+    }
+}
     </script>
 </body>
 </html>

@@ -101,3 +101,31 @@ hr {
 }
 .ico-left::after  { right: 0; }
 .ico-right::after { left: 0; }
+
+
+
+
+/*COCKPIT*/
+div.cockpit-group{
+    display:flex;
+    gap:10px;
+}
+
+
+
+
+/* On vise large pour être sûr de gagner le combat CSS */
+    #paper a, 
+    #paper a:link, 
+    #paper a:visited {
+        color: #007bff !important;
+        text-decoration: underline !important;
+    }
+
+    #paper a:hover {
+        cursor:pointer;
+    color:red;}
+    #paper a:active {
+        color: #0056b3 !important;
+        text-decoration: none !important;
+    }

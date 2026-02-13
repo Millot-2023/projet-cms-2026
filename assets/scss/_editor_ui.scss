@@ -196,6 +196,11 @@ body:has(.master-grid) {
     img { width: 100%; height: 100%; object-fit: cover; }
 }
 
+
+
+
+
+
 .tool-btn { 
     background-color: var(--sidebar-input); 
     border: 1px solid var(--sidebar-border); 
@@ -222,6 +227,72 @@ body:has(.master-grid) {
         color: #fff; // Devient blanc au survol, le SVG suivra grâce à currentColor
     }
 }
+
+
+
+
+
+.tool-btn-hyperliens { 
+    background-color: var(--sidebar-input); 
+    border: 1px solid var(--sidebar-border); 
+    color: var(--sidebar-muted); // Gris par défaut (#666666)
+    height: 40px; 
+    cursor: pointer; 
+    font-size: 10px; 
+    font-weight: bold; 
+    border-radius: 4px; 
+    transition: 0.2s; 
+    text-transform: uppercase; 
+    @include flex-center; 
+    width: 100%; 
+    margin-bottom: 5px; 
+
+    // ICI : On force les rectangles de l'icône à suivre la couleur du texte
+    svg rect {
+        fill: currentColor !important; 
+        transition: fill 0.2s;
+    }
+
+    &:hover {
+        background-color:red;
+        border-color: #555; 
+        color: #fff; // Devient blanc au survol, le SVG suivra grâce à currentColor
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* BOUTONS ACTIONS */
 .btn-gmail { background:#ea4335 !important; color:#ffffff !important; border:none; padding:15px; font-weight:900; cursor:pointer; text-transform:uppercase; font-size:10px; border-radius:4px; width: 100%; margin-bottom: 10px; display: block; text-align: center; text-decoration: none; }
@@ -536,6 +607,29 @@ input[type="range"] { width: 100%; accent-color: #fff; cursor: pointer; }
 
     body.sidebar-hidden & { left: 15px !important; }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -425,6 +425,41 @@ body.sidebar-hidden .sidebar {
   color: #fff;
 }
 
+.tool-btn-hyperliens {
+  background-color: var(--sidebar-input);
+  border: 1px solid var(--sidebar-border);
+  color: var(--sidebar-muted);
+  height: 40px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 4px;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  margin-bottom: 5px;
+}
+.tool-btn-hyperliens svg rect {
+  fill: currentColor !important;
+  -webkit-transition: fill 0.2s;
+  transition: fill 0.2s;
+}
+.tool-btn-hyperliens:hover {
+  background-color: red;
+  border-color: #555;
+  color: #fff;
+}
+
 /* BOUTONS ACTIONS */
 .btn-gmail {
   background: #ea4335 !important;
@@ -837,16 +872,16 @@ body.sidebar-hidden .sidebar-trigger {
   width: 100%;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  /* --- MODE COLONNES (Article final ET Éditeur large) --- */
-  /* On active le flex si l'écran est large OU si le conteneur est large */
-  /* --- LA SEULE RÈGLE DE FORCE (Éditeur bouton Mobile) --- */
-  /* Cette règle "écrase" le flex ci-dessus grâce à la précision du sélecteur */
 }
 .grid-wrapper .col-item {
   width: 100%;
   margin-bottom: 20px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+.grid-wrapper {
+  /* --- MODE COLONNES (Article final ET Éditeur large) --- */
+  /* On active le flex si l'écran est large OU si le conteneur est large */
 }
 @media (min-width: 768px) {
   .grid-wrapper {
@@ -866,6 +901,10 @@ body.sidebar-hidden .sidebar-trigger {
     width: 0;
     margin-bottom: 0;
   }
+}
+.grid-wrapper {
+  /* --- LA SEULE RÈGLE DE FORCE (Éditeur bouton Mobile) --- */
+  /* Cette règle "écrase" le flex ci-dessus grâce à la précision du sélecteur */
 }
 .paper.mobile-view .grid-wrapper {
   display: block;
@@ -891,16 +930,16 @@ body.sidebar-hidden .sidebar-trigger {
   width: 100%;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  /* --- MODE COLONNES (Article final ET Éditeur large) --- */
-  /* On active le flex si l'écran est large OU si le conteneur est large */
-  /* --- LA SEULE RÈGLE DE FORCE (Éditeur bouton Mobile) --- */
-  /* Cette règle "écrase" le flex ci-dessus grâce à la précision du sélecteur */
 }
 .grid-wrapper .col-item {
   width: 100%;
   margin-bottom: 20px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+.grid-wrapper {
+  /* --- MODE COLONNES (Article final ET Éditeur large) --- */
+  /* On active le flex si l'écran est large OU si le conteneur est large */
 }
 @media (min-width: 768px) {
   .grid-wrapper {
@@ -920,6 +959,10 @@ body.sidebar-hidden .sidebar-trigger {
     width: 0;
     margin-bottom: 0;
   }
+}
+.grid-wrapper {
+  /* --- LA SEULE RÈGLE DE FORCE (Éditeur bouton Mobile) --- */
+  /* Cette règle "écrase" le flex ci-dessus grâce à la précision du sélecteur */
 }
 .paper.mobile-view .grid-wrapper {
   display: block;
@@ -1199,156 +1242,57 @@ body.sidebar-hidden .sidebar-trigger {
    MAIN.SCSS - ARCHITECTURE PROJET-CMS-2026
    ========================================================================== */
 .hero-section {
+  position: relative;
   width: 100%;
+  height: 100vh;
   height: 100dvh;
-  margin-top: 0;
-  padding-top: 60px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
   background-color: #1a1a1a;
+  margin: 0;
+  padding: 0;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1;
   overflow: hidden;
-  opacity: 0;
-  -webkit-filter: blur(15px);
-          filter: blur(15px);
-  -webkit-animation: heroEntrance 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-          animation: heroEntrance 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-body.no-anim .hero-section {
-  -webkit-animation: none !important;
-          animation: none !important;
-  opacity: 1 !important;
-  -webkit-filter: blur(0) !important;
-          filter: blur(0) !important;
-  -webkit-transform: scale(1) !important;
-          transform: scale(1) !important;
 }
 .hero-section .hero-content {
   text-align: center;
+  color: #fff;
   z-index: 2;
-  margin-top: calc(-1 * 60px / 2);
 }
 .hero-section .hero-content .hero-title {
-  color: #FFFFFF;
-  font-size: 3rem;
+  font-size: 4rem;
+  font-weight: 900;
   margin: 0;
-  opacity: 0;
-  -webkit-transform: translateY(20px);
-          transform: translateY(20px);
-  -webkit-animation: textAppear 0.8s ease-out 0.5s forwards;
-          animation: textAppear 0.8s ease-out 0.5s forwards;
-}
-body.no-anim .hero-section .hero-content .hero-title {
-  -webkit-animation: none !important;
-          animation: none !important;
-  opacity: 1 !important;
-  -webkit-transform: translateY(0) !important;
-          transform: translateY(0) !important;
-}
-.hero-section .hero-content .hero-subtitle {
-  color: #FFFFFF;
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  opacity: 0;
-  -webkit-transform: translateY(20px);
-          transform: translateY(20px);
-  -webkit-animation: textAppear 0.8s ease-out 0.7s forwards;
-          animation: textAppear 0.8s ease-out 0.7s forwards;
-}
-body.no-anim .hero-section .hero-content .hero-subtitle {
-  -webkit-animation: none !important;
-          animation: none !important;
-  opacity: 1 !important;
-  -webkit-transform: translateY(0) !important;
-          transform: translateY(0) !important;
+  text-transform: uppercase;
 }
 .hero-section .scroll-anchor {
   position: absolute;
-  bottom: 2rem;
+  bottom: 40px;
   left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  color: #FFFFFF;
+  color: #fff;
   font-size: 2rem;
-  text-decoration: none;
-  -webkit-transition: opacity 0.3s ease;
-  transition: opacity 0.3s ease;
   z-index: 10;
-}
-.hero-section .scroll-anchor:hover {
-  opacity: 0.7;
+  text-decoration: none;
 }
 .hero-section .scroll-anchor::before {
   content: "↓";
-  display: block;
   -webkit-animation: bounce 2s infinite;
           animation: bounce 2s infinite;
+  display: block;
 }
 
-.master-grid {
-  position: relative;
-  z-index: 10;
-  background-color: #f4f4f4;
-}
-
-@-webkit-keyframes heroEntrance {
-  0% {
-    opacity: 0;
-    -webkit-filter: blur(15px);
-            filter: blur(15px);
-    -webkit-transform: scale(1.05);
-            transform: scale(1.05);
-  }
-  100% {
-    opacity: 1;
-    -webkit-filter: blur(0);
-            filter: blur(0);
-    -webkit-transform: scale(1);
-            transform: scale(1);
-  }
-}
-
-@keyframes heroEntrance {
-  0% {
-    opacity: 0;
-    -webkit-filter: blur(15px);
-            filter: blur(15px);
-    -webkit-transform: scale(1.05);
-            transform: scale(1.05);
-  }
-  100% {
-    opacity: 1;
-    -webkit-filter: blur(0);
-            filter: blur(0);
-    -webkit-transform: scale(1);
-            transform: scale(1);
-  }
-}
-@-webkit-keyframes textAppear {
-  to {
-    opacity: 1;
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
-  }
-}
-@keyframes textAppear {
-  to {
-    opacity: 1;
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
-  }
-}
 @-webkit-keyframes bounce {
   0%, 20%, 50%, 80%, 100% {
     -webkit-transform: translateY(0);
@@ -1363,6 +1307,7 @@ body.no-anim .hero-section .hero-content .hero-subtitle {
             transform: translateY(-5px);
   }
 }
+
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {
     -webkit-transform: translateY(0);
@@ -1969,4 +1914,30 @@ hr {
 
 .ico-right::after {
   left: 0;
+}
+
+/*COCKPIT*/
+div.cockpit-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+}
+
+/* On vise large pour être sûr de gagner le combat CSS */
+#paper a,
+#paper a:link,
+#paper a:visited {
+  color: #007bff !important;
+  text-decoration: underline !important;
+}
+
+#paper a:hover {
+  cursor: pointer;
+  color: red;
+}
+
+#paper a:active {
+  color: #0056b3 !important;
+  text-decoration: none !important;
 }/*# sourceMappingURL=main.css.map */

@@ -17,12 +17,28 @@
     $body_class = isset($_GET['status']) ? 'no-anim' : '';
     ?>
     
-    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>css/main.css?v=<?php echo $version; ?>">
 
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=block" rel="stylesheet">
+
+<?php if (!empty($data_loaded['google_font'])): ?>
+    <link href="https://fonts.googleapis.com/css2?family=<?php echo str_replace(' ', '+', $data_loaded['google_font']); ?>&display=swap" rel="stylesheet">
+    <style>
+        #paper { font-family: '<?php echo $data_loaded['google_font']; ?>', sans-serif !important; }
+    </style>
+<?php endif; ?>
+
+
+
+
+    <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>css/main.css?v=<?php echo $version; ?>">
+<!--
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=block" rel="stylesheet">
-
+-->
 </head>
 <body class="<?php echo $body_class; ?>">
 
