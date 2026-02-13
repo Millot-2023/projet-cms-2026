@@ -7,7 +7,12 @@
 body {
     font-family: $font-main;
     font-size: $font-size-base;
+
+
     line-height: $line-height-base;
+
+
+
     color: $black-sidebar;
     background-color: $gray-light;
 }
@@ -15,7 +20,7 @@ body {
 h1, .paper h1 {
     font-size: $font-size-h1;
     font-weight: $weight-bold;
-    line-height: 1.2;
+   /* line-height: 1.2;*/
     margin-bottom: $space-between-paragraphs;
 }
 
@@ -34,4 +39,8 @@ h3 {
 
 p {
     margin-bottom: $space-between-paragraphs;
+}
+
+article, .colonne, p {
+    line-height: inherit; /* Force l'utilisation du line-height du body */
 }

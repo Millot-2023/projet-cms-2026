@@ -45,7 +45,7 @@ if (isset($designSystem) && is_array($designSystem)) {
         $fontSize = $props['fontSize'] ?? 'inherit';
         echo ".article-render $tag { 
             font-size: $fontSize; 
-            line-height: 1.6; 
+
             margin-bottom: 1.5rem;
         }\n";
     }
@@ -120,11 +120,30 @@ if (isset($designSystem) && is_array($designSystem)) {
 
             <div class="article-content">
                 <?php if(!empty($summary)): ?>
-                    <p class="summary" style="font-size: 1.2rem; line-height: 1.6; color: #444; margin: 30px 0; border-left: 3px solid #000; padding-left: 20px;">
-                        <em><?php echo nl2br(htmlspecialchars($summary)); ?></em>
-                    </p>
+                    
+                    
+                    
+                    
+
+<p class="summary">
+    <em><?php echo nl2br(htmlspecialchars($summary)); ?></em>
+</p>
+
+
+
+
+
+
+
                     <hr style="border: 0; border-top: 1px solid #eee; margin: 40px 0;">
                 <?php endif; ?>
+
+
+
+
+
+
+                
                 
                 <div class="article-render">
                     <?php echo $finalHtml; ?>
